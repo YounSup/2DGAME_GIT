@@ -31,47 +31,47 @@ def handle_events():
    close_canvas()
   elif event.type == SDL_KEYDOWN and event.key == SDLK_ESCAPE:
    close_canvas()
-  elif event.key == SDLK_F1:
+  elif event.type == SDL_KEYDOWN and event.key == SDLK_F1:
    for boy in team:
     boy.select = False;
    team[0].select = True
-  elif event.key == SDLK_F2:
+  elif event.type == SDL_KEYDOWN and event.key == SDLK_F2:
    for boy in team:
     boy.select = False;
    team[1].select = True
-  elif event.key == SDLK_F3:
+  elif event.type == SDL_KEYDOWN and event.key == SDLK_F3:
    for boy in team:
     boy.select = False;
    team[2].select = True
-  elif event.key == SDLK_F4:
+  elif event.type == SDL_KEYDOWN and event.key == SDLK_F4:
    for boy in team:
     boy.select = False;
    team[3].select = True
-  elif event.key == SDLK_F5:
+  elif event.type == SDL_KEYDOWN and event.key == SDLK_F5:
    for boy in team:
     boy.select = False;
    team[4].select = True
-  elif event.key == SDLK_F6:
+  elif event.type == SDL_KEYDOWN and event.key == SDLK_F6:
    for boy in team:
     boy.select = False;
    team[5].select = True
-  elif  event.key == SDLK_F7:
+  elif event.type == SDL_KEYDOWN and event.key == SDLK_F7:
    for boy in team:
     boy.select = False;
    team[6].select = True
-  elif event.key == SDLK_F8:
+  elif event.type == SDL_KEYDOWN and event.key == SDLK_F8:
    for boy in team:
     boy.select = False;
    team[7].select = True
-  elif  event.key == SDLK_F9:
+  elif event.type == SDL_KEYDOWN and event.key == SDLK_F9:
    for boy in team:
     boy.select = False;
    team[8].select = True
-  elif  event.key == SDLK_F10:
+  elif event.type == SDL_KEYDOWN and event.key == SDLK_F10:
    for boy in team:
     boy.select = False;
    team[9].select = True
-  elif  event.key == SDLK_F11:
+  elif event.type == SDL_KEYDOWN and event.key == SDLK_F11:
    for boy in team:
     boy.select = False;
    team[10].select = True
