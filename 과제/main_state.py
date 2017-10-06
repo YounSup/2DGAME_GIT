@@ -14,18 +14,36 @@ class Grass:
   self.image.draw(400, 30)
 
 class Boy:
+image = None
+LEFT_RUN, RIGHT_RUN = 0.1
  def __init__(self):
   self.x, self.y = random.randint(100, 700), random.randint(100,400)
   self.frame = random.randint(0,7)
-  self.image = load_image('run_animation.png')
+  slef.dir =1
+  self.state = self.RIGHT_RUN
+  if Boy.image == None :
+      Boy.image = load_image('animation_sheet.png')
   self.select = False;
+  
  def update(self):
-  self.frame = (self.frame + 1) % 8
-  self.x += 2
-  if self.x > 800:
-   self.x=0
+  if self.state == self.RIGHT_RUN:
+      self.frame = (self.frame + 1) % 8
+      self.x += (self.dir * 5)
+  elif self.state == self.LEFT_RUN:
+      self.frame = (self.frame + 1) % 8
+      self.x += (self.dir * 5)
+      
+  if self.x >800:
+      self.dir= -1
+      self.x = 800
+      self.state = self.LEFT_RUN
+    elif self.x <0:
+        self.dir =1
+        delf.x = 0
+        self.state = self.RIGHT_RUN
+        
  def draw(self):
-  self.image.clip_draw(self.frame*100,0,100,100,self.x,self.y)
+  self.image.clip_draw(self.frame*100,self.state*100, 100, 100, self.x, self.y)
 
 def enter():
     global boy, grass
