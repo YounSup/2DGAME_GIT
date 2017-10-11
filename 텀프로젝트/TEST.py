@@ -3,11 +3,43 @@ from pico2d import *
 open_canvas(1200, 600)
 
 image2 = load_image('stage1-1.jpg')
-
 image2.draw(600, 300)
-
 update_canvas()
 
+Right, Left = 0,1
+global genji_bullet_num
+genji_bullet_num = 0
+class bullet:
+    global genji_bullet_num
+    image = None
+    genji_bullet_num +=1
+    def __init__(self):
+        self.Draw_value = False
+        self.x, self.y, self.z =0,0,0
+        self.speed, self.damage= 20,10
+        self.Rotateangle =0
+        self.state = Right
+        if bullet.image == None:
+            self.image_tn = load_image('겐지표창.png')
+
+    def update(self):
+        global genji_bullet_num
+        if self.state == Right:
+            self.x += self.speed
+        elif self.state == Left:
+            self.x -= self.speed
+
+        self.Rotateangle +=60
+        if self.x >=1200 or self.x <=0:
+            self.Draw_value = False
+
+    def draw(self):
+        if self.Draw_value == True:
+            if self.state == Right:
+              #  self.image_tn.draw(self.x,self.y,47,48)
+                self.image_tn.rotate_draw(self.Rotateangle,self.x,self.y,47,48)
+            elif self.state == Left:
+                self.image_tn.rotate_draw(self.Rotateangle, self.x, self.y, 47, 48)
 
 class Genji:
     def __init__(self):
@@ -15,13 +47,19 @@ class Genji:
         self.imageleft = load_image('겐지스프라이트왼쪽.png')
         self.image_Rightjump = load_image('겐지점프.png')
         self.image_Leftjump = load_image('겐지점프왼쪽.png')
+        self.image_Skill=[load_image('질풍참1.png'),load_image('질풍참2.png'),
+                          load_image('질풍참3.png'),load_image('질풍참4.png'),
+                          load_image('질풍참5.png'),load_image('질풍참6.png')]
+
         self.x, self.y, self.z = 100, 50 , 0
+        self.Skill_1_OnOff = True; # True가 스킬 on임
         self.bodyframe = 0
         self.attackstate = 0 #공격상태
         self.attackframe = 0 #공격모션프레임
         self.jumpcount, self.jump_num, self.jumpstate, self.savey = 0, 0, False,0
         self.jumpframe = 1
         self.genjistate = 0 #겐지상태 좌,우 이동 멈춤
+        self.drawnum =0 #스프라이트 아닌 애니메이션 변수
 
         self.KEYCHECK_LEFT, self.KEYCHECK_RIGHT = 0, 0  # 키눌림용 변수
         self.KEYCHECK_UP, self.KEYCHECK_DOWN = 0, 0
@@ -61,7 +99,8 @@ class Genji:
 
     def draw(self): #출력부분
 
-            if self.genjistate == 0:  # 겐지가 오른쪽볼때
+
+            if self.genjistate == Right:  # 겐지가 오른쪽볼때
                 if self.jumpcount == 0:
                     self.image.clip_draw(self.bodyframe * 300, 600, 300, 300, self.x, self.y)
                 elif self.jumpcount >=1:
@@ -76,7 +115,7 @@ class Genji:
                     self.image.clip_draw(self.attackframe * 300, 0, 300, 300, self.x, self.y)
 
 
-            elif self.genjistate == 1:  # 겐지가 왼쪽볼때
+            elif self.genjistate == Left:  # 겐지가 왼쪽볼때
                 if self.jumpcount == 0:
                     self.imageleft.clip_draw(self.bodyframe * 300, 600, 300, 300, self.x, self.y)
                 elif self.jumpcount >=1:
@@ -90,20 +129,26 @@ class Genji:
                 elif self.attackstate == 1 and self.jumpstate == False:
                     self.imageleft.clip_draw(self.attackframe * 300, 0, 300, 300, self.x, self.y)
 
-
-
-
-
-
+            # 이펙트는 앞에
+            if self.Skill_1_OnOff == False:
+                if self.genjistate == 0:
+                    self.image_Skill[self.drawnum].draw(self.x - 150, self.y + 20, 750, 192)
+                if self.genjistate == 1:
+                    self.image_Skill[self.drawnum].draw(self.x + 150, self.y + 20, 750, 192)
+                self.drawnum += 1
+                if self.drawnum == 6:
+                     self.Skill_1_OnOff = True;
 
 
 genji = Genji()
 genji.genjistate = 0
 running = True;
+throw_knife = [bullet() for i in range(30)]
 
 
 def handle_events():
     global running
+    global genji_bullet_num
     events = get_events()
     for event in events:
         if event.type == SDL_QUIT:
@@ -135,6 +180,18 @@ def handle_events():
 
         elif event.type == SDL_KEYDOWN and event.key == SDLK_LCTRL:
             genji.attackstate = 1
+            for bullet in throw_knife:
+                if bullet.Draw_value ==False:
+                    bullet.Draw_value = True;
+                    if genji.genjistate == Right:
+                        bullet.state = Right
+                        bullet.x = genji.x + 80
+                        bullet.y = genji.y + 60
+                    else:
+                        bullet.state = Left
+                        bullet.x = genji.x - 80
+                        bullet.y = genji.y + 60
+                    break
 
         elif event.type == SDL_KEYDOWN and event.key == SDLK_LALT:
             if genji.jumpcount <2:
@@ -145,13 +202,27 @@ def handle_events():
                 if genji.jumpcount ==2:
                     genji.jumpstate = True;
 
+        elif event.type == SDL_KEYDOWN and event.key == SDLK_LSHIFT and genji.Skill_1_OnOff == True:
+            if genji.genjistate == 0:
+                genji.x += 350
+            elif genji.genjistate == 1:
+                genji.x -= 350
+            genji.drawnum =0
+            genji.Skill_1_OnOff = False;
+
 
 
 while running:
     handle_events()
     genji.update()
+    for bullet in throw_knife:
+        if bullet.Draw_value == True:
+            bullet.update()
     clear_canvas()
     image2.draw(600, 300)
     genji.draw()
+    for bullet in throw_knife:
+        if bullet.Draw_value == True:
+            bullet.draw()
     update_canvas()
     delay(0.02)
