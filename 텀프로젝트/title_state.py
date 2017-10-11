@@ -7,13 +7,11 @@ image = None
 
 def enter():
     global image
-    open_canvas(1200,600)
     image = load_image('게임메뉴화면1.jpg')
 
 def exit():
     global image
     del(image)
-    close_canvas()
 
 def handle_events():
     events = get_events()
