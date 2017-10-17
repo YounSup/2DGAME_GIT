@@ -4,11 +4,13 @@ import game_framework
 import start_state
 import main_state
 import title_state
+import json
+
+BOYNUM = 5
 
 
-
-
-
+LKC=0
+RKC=0
 
 class Grass:
  def __init__(self):
@@ -25,7 +27,7 @@ class Boy:
       self.x, self.y = random.randint(100, 700), random.randint(50,550)
       self.frame = random.randint(0,7)
       self.dir =1
-      self.state = random.randint(0,3)
+      self.state = 3
       if Boy.image == None :
           Boy.image = load_image('animation_sheet.png')
       self.select = False;
@@ -75,7 +77,12 @@ class Boy:
 
     def update(self):
       self.frame = (self.frame +1)%8
-      self.handle_state[self.state](self)
+     # self.handle_state[self.state](self)
+
+      if self.state == self.RIGHT_RUN:
+          self.x = min (800, self.x +5)
+      elif self.state == self.LEFT_RUN:
+          self.x = max(0, self.x - 5)
     
     def draw(self):
       self.image.clip_draw(self.frame*100,self.state*100, 100, 100, self.x, self.y)
@@ -83,15 +90,35 @@ class Boy:
     
             
 def enter():
-    global boy, grass, team, select_num
+    global boy, grass, team, select_num,data
     grass = Grass()
     boy = Boy()
-    team = [Boy() for i in range(1000)]
+    #team = [Boy() for i in range(BOYNUM)]
     select_num = 0
     print('Select Num : {}'.format(select_num))
-    team[select_num].select = True
 
+    data_file = open('team_data.json','r')
+    data=json.load(data_file)
+    data_file.close()
 
+    plyer_state_table = {
+        "LEFT_RUN" : Boy.LEFT_RUN,
+        "RIGHT_RUN" : Boy.RIGHT_RUN,
+        "LEFT_STAND": Boy.LEFT_STAND,
+        "RIGHT_STAND": Boy.RIGHT_STAND,
+    }
+
+    team = []
+    for name in data:
+        player = Boy()
+        player.name = name
+        player.x = data[name]['x']
+        player.y = data[name]['y']
+        player.state = plyer_state_table[data[name]['StartState']]
+        team.append(player)
+
+    return team
+    team[select_num].select = True;
 
 def exit():
     global boy, grass
@@ -99,15 +126,35 @@ def exit():
     del(grass)
 
 def handle_events():
-    global select_num
+    global select_num, RKC, LKC
     events = get_events()
     for event in events:
         if event.type == SDL_QUIT:
             game_framework.quit()
         elif event.type == SDL_KEYDOWN and event.key == SDLK_ESCAPE:
             game_framework.change_state(title_state)
+
+        elif event.type == SDL_KEYDOWN and event.key == SDLK_LEFT:
+            if team[select_num].state in (team[select_num].RIGHT_STAND, team[select_num].LEFT_STAND):
+                team[select_num].state = team[select_num].LEFT_RUN
+
+
+        elif event.type == SDL_KEYDOWN and event.key == SDLK_RIGHT:
+            if team[select_num].state in (team[select_num].RIGHT_STAND, team[select_num].LEFT_STAND):
+                team[select_num].state = team[select_num].RIGHT_RUN
+
+        elif event.type == SDL_KEYUP and event.key == SDLK_RIGHT:
+            if team[select_num].state in (team[select_num].RIGHT_RUN,team[select_num].LEFT_RUN):
+                team[select_num].state = team[select_num].RIGHT_STAND
+
+
+        elif event.type == SDL_KEYUP and event.key == SDLK_LEFT:
+            if team[select_num].state in (team[select_num].LEFT_RUN,team[select_num].RIGHT_RUN):
+                team[select_num].state = team[select_num].LEFT_STAND
+
+
         elif event.type == SDL_KEYDOWN and event.key == SDLK_UP:
-            if select_num < 1000:
+            if select_num < BOYNUM-1:
                 select_num +=1
                 print('Select Num : {}'.format(select_num))
                 for boy in team:
@@ -121,10 +168,10 @@ def handle_events():
                     boy.select = False;
                     team[select_num].select = True
 
-        elif event.type == SDL_MOUSEMOTION:
-           for boy in team:
-            if boy.select == True:
-             boy.x, boy.y = event.x, 600- event.y
+      #  elif event.type == SDL_MOUSEMOTION:
+      #     for boy in team:
+      #      if boy.select == True:
+      #       boy.x, boy.y = event.x, 600- event.y
 
 def update():
     for boy in team:

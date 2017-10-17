@@ -1,0 +1,9 @@
+{
+	"a" : {"StartState":"RIGHT_STAND", "x":100, "y":100},
+	"b" : {"StartState":"RIGHT_STAND", "x":200, "y":200},
+	"c" : {"StartState":"RIGHT_STAND", "x":300, "y":300},
+	"d" : {"StartState":"RIGHT_STAND", "x":400, "y":400},
+	"e" : {"StartState":"RIGHT_STAND", "x":500, "y":500}
+}
+    
+
