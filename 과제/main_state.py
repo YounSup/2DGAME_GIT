@@ -9,9 +9,6 @@ import json
 BOYNUM = 5
 
 
-LKC=0
-RKC=0
-
 class Grass:
  def __init__(self):
   self.image = load_image('grass.png')
@@ -28,9 +25,11 @@ class Boy:
       self.frame = random.randint(0,7)
       self.dir =1
       self.state = 3
+
       if Boy.image == None :
           Boy.image = load_image('animation_sheet.png')
       self.select = False;
+
 
     def handle_left_run(self):
         self.x -=5
@@ -86,17 +85,17 @@ class Boy:
     
     def draw(self):
       self.image.clip_draw(self.frame*100,self.state*100, 100, 100, self.x, self.y)
-     
+
     
             
 def enter():
-    global boy, grass, team, select_num,data
+    global boy, grass, team, select_num,data, point
     grass = Grass()
     boy = Boy()
     #team = [Boy() for i in range(BOYNUM)]
     select_num = 0
     print('Select Num : {}'.format(select_num))
-
+    point = load_image('point.png')
     data_file = open('team_data.json','r')
     data=json.load(data_file)
     data_file.close()
@@ -118,7 +117,8 @@ def enter():
         team.append(player)
 
     return team
-    team[select_num].select = True;
+    team[0].select = True;
+
 
 def exit():
     global boy, grass
@@ -182,7 +182,8 @@ def draw():
     grass.draw()
     for boy in team:
         boy.draw()
-    
+
+    point.draw(team[select_num].x+10,team[select_num].y+60)
     update_canvas()
     
 
