@@ -1,4 +1,4 @@
-from pico2d import*
+﻿from pico2d import*
 import random
 import game_framework
 import title_state
@@ -283,12 +283,13 @@ def handle_events():
                 genji.ult_OnOFF = False
 
 def update():
-    genji.update()
-    for bullet in throw_knife:
-        if bullet.Draw_value == True:
-            bullet.update()
-    clear_canvas()
-    delay(0.020)
+
+        genji.update()
+        for bullet in throw_knife:
+            if bullet.Draw_value == True:
+                bullet.update()
+        clear_canvas()
+        delay(0.020)
 def draw():
     stage.draw()
     genji.draw()
