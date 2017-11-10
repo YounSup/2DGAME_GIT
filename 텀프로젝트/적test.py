@@ -68,8 +68,10 @@ class Reinhard:
         c.idle()
         
     def draw(c):
-        c.image.clip_draw(c.frame * 199, c.dir * 177 ,199,177,c.x,c.y)
-            
+        if c.dir == LEFT:
+            c.image.clip_draw(c.frame * 199, 177 ,199,177,c.x,c.y)
+        else:
+            c.image.clip_draw(c.frame * 199, 0 ,199,177,c.x,c.y)
     
 
 e= Robot()
