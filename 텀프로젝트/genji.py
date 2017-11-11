@@ -4,7 +4,9 @@ throw_knife=[]
 
 class bullet:
     image = None
-    def __init__(self ,X, Y,Z, STATE):
+    image_bullet = None
+    def __init__(self ,X, Y,Z, STATE, INDEX):
+        self.index = INDEX
         self.x, self.y, self.z =X,Y,Z
         self.speed, self.damage= 20,10
         self.Rotateangle =0
@@ -12,6 +14,7 @@ class bullet:
         self.delete = False
         if bullet.image == None:
             bullet.image = load_image('겐지표창.png')
+            bullet.image_bullet = load_image('총알.png')
 
     def update(self):
         global genji_bullet_num
@@ -26,10 +29,15 @@ class bullet:
 
     def draw(self):
         if self.state == Right:
-              #  self.image_tn.draw(self.x,self.y,47,48)
-            bullet.image.rotate_draw(self.Rotateangle,self.x,self.y,47,48)
+            if self.index == 0:
+                bullet.image.rotate_draw(self.Rotateangle,self.x,self.y,47,48)
+            elif self.index == 1:
+                bullet.image_bullet.clip_draw(30, 0 ,30,11,self.x,self.y)
         elif self.state == Left:
-            bullet.image.rotate_draw(self.Rotateangle, self.x, self.y, 47, 48)
+            if self.index ==0:
+               bullet.image.rotate_draw(self.Rotateangle, self.x, self.y, 47, 48)
+            elif self.index == 1:
+               bullet.image_bullet.clip_draw(0, 0 ,30,11,self.x,self.y)
 
 
 class Genji:
@@ -92,8 +100,10 @@ class Genji:
             if self.y < self.savey:
                 self.y = self.savey
                 self.jumpcount = 0
-
-
+    def get_bb(self):
+        return self.x-30, self.y-30, self.x+30, self.y+90
+    def draw_bb(self):
+        draw_rectangle(*self.get_bb())
 
     def draw(self): #출력부분
             if self.genjistate == Right:  # 겐지가 오른쪽볼때
@@ -161,6 +171,7 @@ class Genji:
                 self.drawnum += 1
                 if self.drawnum == 6:
                      self.Skill_1_OnOff = True;
+            self.draw_bb()
 
     def handle_events(self,event):
             if event.type == SDL_KEYDOWN:
@@ -183,9 +194,9 @@ class Genji:
                         self.attackstate = 1
 
                         if self.genjistate == Right:
-                            throw_knife.append(bullet(self.x + 80, self.y + 60, self.z, Right))
+                            throw_knife.append(bullet(self.x + 80, self.y + 60, self.z, Right,0))
                         else:
-                            throw_knife.append(bullet(self.x - 80, self.y + 60, self.z, Left))
+                            throw_knife.append(bullet(self.x - 80, self.y + 60, self.z, Left,0))
                     else:
                         self.ult_attacknum += 1
                         self.ult_flag = 1
@@ -233,12 +244,9 @@ class Genji:
 
 def bullet_update():
     for bullet in throw_knife:
-        i = 0
         bullet.update()
         if bullet.delete == True:
-            print("나는지워졌다")
-            throw_knife.pop(i)
-        i += 1
+            throw_knife.remove(bullet)
 def bullet_draw():
     for bullet in throw_knife:
         bullet.draw()
