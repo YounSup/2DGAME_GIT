@@ -35,7 +35,7 @@ class Boy:
       self.state = 0
       self.total_frames =0
       if Boy.image == None :
-          Boy.image = load_image('animation_sheet.png')
+          Boy.image = load_image('인디아나존스실사그자체.png')
 
 
 
@@ -51,7 +51,7 @@ class Boy:
       distance = Boy.RUN_SPEED_PPS* frame_time
       self.total_frames += 1.0
       if Animation_time> MAX_ANIMATION_TIME:
-        self.frame = (self.frame +1)%8 #현재는 프레임마다 애니메이션이 바뀐다. => 이를 일정시간지나면 바뀌게 해야함.
+        self.frame = (self.frame +1)%7 #현재는 프레임마다 애니메이션이 바뀐다. => 이를 일정시간지나면 바뀌게 해야함.
         Animation_time = 0
       self.x += (self.dir*distance)
 
@@ -70,7 +70,7 @@ class Boy:
 
     
     def draw(self):
-      self.image.clip_draw(self.frame*100,self.state*100, 100, 100, self.x, self.y)
+      self.image.clip_draw(self.frame*30,0, 30, 48, self.x, self.y)
 
     
             

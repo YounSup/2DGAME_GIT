@@ -54,13 +54,13 @@ class Reinhard:
         if c.dir == RIGHT :
             c.x += 5
             c.count +=1
-            if c.count == 10:
+            if c.count == 50:
                 c.count =0
                 c.dir =LEFT
         elif c.dir == LEFT:
             c.x -= 5
             c.count +=1
-            if c.count == 10:
+            if c.count == 50:
                 c.count =0
                 c.dir =RIGHT
     def update(c):
@@ -135,4 +135,4 @@ while a:
     f.draw()
     s.draw()
     update_canvas()
-    delay(0.02)
+    delay(0.05)
