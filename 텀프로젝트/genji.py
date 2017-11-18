@@ -53,7 +53,10 @@ class Genji:
         self.image_LEFT_Ult = load_image('용검LEFT.png')
         self.image_ult_attack_right =[load_image('용검Right공격1.png'), load_image('용검Right공격2.png')]
         self.image_ult_attack_left = [load_image('용검Left공격1.png'), load_image('용검Left공격2.png')]
+        self.image_skill_cooltime_n = load_image('겐지스킬.png')
+        self.image_skill_cooltime_u = load_image('겐지스킬아이콘.png')
 
+        
         self.x, self.y, self.z = 100, 50 , 0
         self.Skill_1_OnOff = True; # True가 스킬 on임
         self.bodyframe = 0
@@ -132,7 +135,7 @@ class Genji:
                         self.image.clip_draw(self.bodyframe * 300, 300, 300, 300, self.x, self.y)
                     elif self.attackstate == 1 and self.jumpstate == False:
                         self.image.clip_draw(self.attackframe * 300, 0, 300, 300, self.x, self.y)
-
+    
 
             elif self.genjistate == Left:  # 겐지가 왼쪽볼때
 
@@ -172,6 +175,9 @@ class Genji:
                 if self.drawnum == 6:
                      self.Skill_1_OnOff = True;
             self.draw_bb()
+
+            self.image_skill_cooltime_n.clip_draw(0,0,115,104,600,500)
+
 
     def handle_events(self,event):
             if event.type == SDL_KEYDOWN:
@@ -219,10 +225,10 @@ class Genji:
                         self.Skill_1_OnOff = False;
 
                 elif event.key == SDLK_q:
-                        if genji.ult_OnOFF == False:
-                            genji.ult_OnOFF = True
+                        if self.ult_OnOFF == False:
+                            self.ult_OnOFF = True
                         else:
-                            genji.ult_OnOFF = False
+                            self.ult_OnOFF = False
 
             if event.type == SDL_KEYUP:
 
