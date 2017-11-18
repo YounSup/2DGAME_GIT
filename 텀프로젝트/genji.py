@@ -1,7 +1,7 @@
 ﻿from pico2d import*
 Right, Left = 0,1
 throw_knife=[]
-
+i =0
 class bullet:
     image = None
     image_bullet = None
@@ -72,8 +72,13 @@ class Genji:
         self.KEYCHECK_LEFT, self.KEYCHECK_RIGHT = 0, 0  # 키눌림용 변수
         self.KEYCHECK_UP, self.KEYCHECK_DOWN = 0, 0
 
+        self.cool_shift = 0
+        self.cool_protect =0
+        self.cool_ult =104
     def update(self):
+        global i
         self.bodyframe = (self.bodyframe + 1) % 13
+
         if self.jumpstate == True:
             if self.jumpframe ==7:
                 self.jumpstate = False;
@@ -103,6 +108,18 @@ class Genji:
             if self.y < self.savey:
                 self.y = self.savey
                 self.jumpcount = 0
+
+
+
+        if self.cool_shift >0:
+            self.cool_shift -=1
+        if self.cool_protect>0:
+            self.cool_protect -=1
+
+        if self.cool_ult>0 and i%10 ==0:
+            self.cool_ult-=1
+
+        i+=1
     def get_bb(self):
         return self.x-30, self.y-30, self.x+30, self.y+90
     def draw_bb(self):
@@ -176,8 +193,12 @@ class Genji:
                      self.Skill_1_OnOff = True;
             self.draw_bb()
 
-            self.image_skill_cooltime_n.clip_draw(0,0,115,104,600,500)
+            self.image_skill_cooltime_n.clip_draw(0,0,115,104,700,500)# 질풍참 쿨
+            self.image_skill_cooltime_n.clip_draw(0, 104, 115, 104 -self.cool_shift, 700, 500 -self.cool_shift/2)  # 질풍참 온
 
+            self.image_skill_cooltime_n.clip_draw(116,0,115, 104, 805, 500)#튕기기 쿨
+            self.image_skill_cooltime_u.clip_draw(104, 0, 104, 104, 400, 500)  # 궁극기 클
+            self.image_skill_cooltime_u.clip_draw(0,0,104,104- self.cool_ult, 400,500- self.cool_ult/2) #궁극기 온
 
     def handle_events(self,event):
             if event.type == SDL_KEYDOWN:
@@ -217,18 +238,21 @@ class Genji:
                                 self.jumpstate = True;
 
                 elif event.key == SDLK_LSHIFT and self.Skill_1_OnOff == True:
-                        if self.genjistate == 0:
-                            self.x = min(1180, self.x + 350)
-                        elif self.genjistate == 1:
-                            self.x = max(20, self.x - 350)
-                        self.drawnum = 0
-                        self.Skill_1_OnOff = False;
+                        if self.cool_shift ==0 :
+                            if self.genjistate == 0:
+                                self.x = min(1180, self.x + 350)
+                            elif self.genjistate == 1:
+                                self.x = max(20, self.x - 350)
+                            self.drawnum = 0
+                            self.Skill_1_OnOff = False;
+                            self.cool_shift= 104
+                        else :
+                            print("쿨타임 질풍참")
 
                 elif event.key == SDLK_q:
-                        if self.ult_OnOFF == False:
+                        if self.cool_ult <=0:
                             self.ult_OnOFF = True
-                        else:
-                            self.ult_OnOFF = False
+
 
             if event.type == SDL_KEYUP:
 
