@@ -5,6 +5,7 @@ i =0
 class bullet:
     image = None
     image_bullet = None
+    image_Para_bullet = None
     def __init__(self ,X, Y,Z, STATE, INDEX):
         self.index = INDEX
         self.x, self.y, self.z =X,Y,Z
@@ -15,14 +16,23 @@ class bullet:
         if bullet.image == None:
             bullet.image = load_image('겐지표창.png')
             bullet.image_bullet = load_image('총알.png')
+            bullet.image_Para_bullet=load_image('파라총알.png')
 
     def update(self):
         global genji_bullet_num
-        if self.state == Right:
-            self.x += self.speed
-        elif self.state == Left:
-            self.x -= self.speed
 
+        if self.index <2:
+            if self.state == Right:
+                self.x += self.speed
+            elif self.state == Left:
+                self.x -= self.speed
+        elif self.index ==2:
+            if self.state == Right:
+                self.x += self.speed
+                self.y -= self.speed-10
+            elif self.state == Left:
+                self.x -= self.speed
+                self.y -= self.speed-10
         self.Rotateangle +=60
         if self.x >=1200 or self.x <=0:
             self.delete = True
@@ -33,11 +43,16 @@ class bullet:
                 bullet.image.rotate_draw(self.Rotateangle,self.x,self.y,47,48)
             elif self.index == 1:
                 bullet.image_bullet.clip_draw(30, 0 ,30,11,self.x,self.y)
+            elif self.index == 2:
+                bullet.image_Para_bullet.clip_draw(0, 0 ,52,49,self.x,self.y)
+
         elif self.state == Left:
             if self.index ==0:
                bullet.image.rotate_draw(self.Rotateangle, self.x, self.y, 47, 48)
             elif self.index == 1:
                bullet.image_bullet.clip_draw(0, 0 ,30,11,self.x,self.y)
+            elif self.index == 2:
+               bullet.image_Para_bullet.clip_draw(0, 0 ,52,49,self.x,self.y)
 
 
 class Genji:

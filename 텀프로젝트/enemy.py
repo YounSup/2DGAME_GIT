@@ -1,17 +1,15 @@
 from pico2d import *
 from genji import *
-open_canvas(1200,600)
 
-
+enemys= []
 LEFT, RIGHT = 0 ,1
-
 class Robot:
     image = [None, None]
-    def __init__(c):
-        c.x, c.y, c.z = 300,60,0
+    def __init__(c, x, y, z=0, dir = 1):
+        c.x, c.y, c.z = x, y, z
         c.damage, c.speed = 0,0
         c.state= 0
-        c.dir = 1
+        c.dir = dir
         c.frame =0
         c.count =0
         if Robot.image[0] == None or Robot.image[1] == None :
@@ -37,15 +35,15 @@ class Robot:
         c.idle()
         
     def draw(c):
-            c.image[c.dir].clip_draw(c.frame * 90,0,90,86,c.x,c.y)
+            Robot.image[c.dir].clip_draw(c.frame * 90,0,90,86,c.x,c.y)
 
 class Reinhard:
     image = None
-    def __init__(c):
-        c.x,c.y,c.z = 500, 250, 0
+    def __init__(c, x, y, z=0, dir = 1):
+        c.x,c.y,c.z = x, y, z
         c.damage, c.speed = 0,0
         c.state= 0
-        c.dir = 1
+        c.dir = dir
         c.frame =0
         c.count =0
         if Reinhard.image == None:
@@ -69,17 +67,17 @@ class Reinhard:
         
     def draw(c):
         if c.dir == LEFT:
-            c.image.clip_draw(c.frame * 199, 177 ,199,177,c.x,c.y)
+            Reinhard.image.clip_draw(c.frame * 199, 177 ,199,177,c.x,c.y)
         else:
-            c.image.clip_draw(c.frame * 199, 0 ,199,177,c.x,c.y)
+            Reinhard.image.clip_draw(c.frame * 199, 0 ,199,177,c.x,c.y)
 
 class Sold:
     image = None
-    def __init__(c):
-        c.x,c.y,c.z = 200, 260, 0
+    def __init__(c, x, y, z=0, dir = 1):
+        c.x,c.y,c.z = x, y, z
         c.damage, c.speed = 0,0
         c.state= 0
-        c.dir = 1
+        c.dir = dir
         c.frame =0
         c.count =0
         if Sold.image == None:
@@ -105,9 +103,9 @@ class Sold:
         
     def draw(c):
         if c.dir == LEFT:
-            c.image.clip_draw(c.frame * 300, 300 ,300,300,c.x,c.y)
+            Sold.image.clip_draw(c.frame * 300, 300 ,300,300,c.x,c.y)
         else:
-            c.image.clip_draw(c.frame * 300, 0 ,300,300,c.x,c.y)
+            Sold.image.clip_draw(c.frame * 300, 0 ,300,300,c.x,c.y)
     
     def attack(c):
         if c.dir == Right:
@@ -115,24 +113,63 @@ class Sold:
         else:
             throw_knife.append(bullet(c.x-30, c.y+15, c.z, Right,1))
 
-e= Robot()
-f= Reinhard()
-s = Sold()
-i =0
-a = True;
 
-while a:
-    i+=1
-    clear_canvas()
-    e.update()
-    f.update()
-    s.update()
-    if i%10 == 0:
-        s.attack()
-    bullet_update()
-    bullet_draw()
-    e.draw()
-    f.draw()
-    s.draw()
-    update_canvas()
-    delay(0.05)
+class Para:
+    image = None
+    image_boost = None
+    def __init__(c, x, y, z=0, dir = 1):
+        c.x, c.y, c.z = x,y, z
+        c.damage, c.speed = 0, 0
+        c.state = 0
+        c.dir = dir
+        c.frame = 0
+        c.count = 0
+        if Para.image == None:
+            Para.image = load_image('파라.png')
+            Para.image_boost = load_image('파라부스터W200.png')
+
+    def idle(c):
+        if c.dir == RIGHT:
+            c.x += 5
+            c.y += 1
+            c.count += 1
+            if c.count == 30:
+                c.count = 0
+                c.dir = LEFT
+        elif c.dir == LEFT:
+            c.x -= 5
+            c.y -=1
+            c.count += 1
+            if c.count == 30:
+                c.count = 0
+                c.dir = RIGHT
+
+    def update(c):
+        c.frame = (c.frame+1)%3
+        c.idle()
+
+    def draw(c):
+        if c.dir == LEFT:
+            Para.image_boost.clip_draw(c.frame * 200, 150, 200, 150, c.x + 50, c.y + 20, 100, 75)
+            Para.image.clip_draw( 0, 0, 300, 275, c.x, c.y,150,137)
+
+        else:
+            Para.image_boost.clip_draw(c.frame * 200, 0, 200, 150, c.x - 50, c.y + 20, 100, 75)
+            Para.image.clip_draw(300, 0, 300, 275, c.x, c.y,150,137)
+
+
+    def attack(c):
+        if c.dir == Right:
+            throw_knife.append(bullet(c.x -75, c.y - 45, c.z, Left, 2))
+        else:
+            throw_knife.append(bullet(c.x +75, c.y - 45, c.z, Right, 2))
+
+
+
+def enemys_update():
+    for enemy in enemys:
+        enemy.update()
+def enemys_draw():
+    for enemy in enemys:
+        enemy.draw()
+

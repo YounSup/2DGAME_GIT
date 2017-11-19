@@ -3,6 +3,7 @@ import game_framework
 import title_state
 import start_state
 import genji
+import enemy
 
 class Map:
     def __init__(self):
@@ -20,6 +21,7 @@ def enter():
     global hero, stage, menu
     menu = Menu()
     hero = genji.Genji()
+    enemy.enemys.append(enemy.Robot(500,200))
     stage = Map()
 
 def exit():
@@ -36,12 +38,14 @@ def handle_events():
 def update():
     hero.update()
     genji.bullet_update()
+    enemy.enemys_update()
     clear_canvas()
     delay(0.020)
 def draw():
     stage.draw()
     hero.draw()
     genji.bullet_draw()
+    enemy.enemys_draw()
     if menu.Menu_OnOff == True:
         menu.draw()
     update_canvas()
