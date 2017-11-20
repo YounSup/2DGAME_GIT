@@ -33,10 +33,16 @@ class Robot:
     def update(c):
         c.frame = (c.frame+1)%4
         c.idle()
-        
+
+    def get_bb(self):
+        return self.x - 25, self.y - 25, self.x + 25, self.y + 25
+
+    def draw_bb(self):
+        draw_rectangle(*self.get_bb())
+
     def draw(c):
             Robot.image[c.dir].clip_draw(c.frame * 90,0,90,86,c.x,c.y)
-
+            c.draw_bb()
 class Reinhard:
     image = None
     def __init__(c, x, y, z=0, dir = 1):
@@ -95,7 +101,11 @@ class Sold:
             if c.count == 60:
                 c.count =0
                 c.dir =RIGHT
-                
+    def get_bb(self):
+        return self.x - 30, self.y - 60, self.x + 30, self.y + 60
+
+    def draw_bb(self):
+        draw_rectangle(*self.get_bb())
     def update(c):
         c.frame = (c.frame+1)%9
         c.idle()
@@ -106,7 +116,7 @@ class Sold:
             Sold.image.clip_draw(c.frame * 300, 300 ,300,300,c.x,c.y)
         else:
             Sold.image.clip_draw(c.frame * 300, 0 ,300,300,c.x,c.y)
-    
+        c.draw_bb()
     def attack(c):
         if c.dir == Right:
             throw_knife.append(bullet(c.x+30, c.y+15, c.z, Left,1))

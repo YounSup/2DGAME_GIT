@@ -14,15 +14,10 @@ class bullet:
         self.state = STATE
         self.delete = False
 
-
-
-        
         if bullet.image == None:
             bullet.image = load_image('겐지표창.png')
             bullet.image_bullet = load_image('총알.png')
             bullet.image_Para_bullet=load_image('파라총알.png')
-
-
 
     def update(self):
         global genji_bullet_num
@@ -43,6 +38,12 @@ class bullet:
         if self.x >=1200 or self.x <=0:
             self.delete = True
 
+    def get_bb(self):
+        return self.x - 10, self.y - 10, self.x + 10, self.y + 10
+
+    def draw_bb(self):
+        draw_rectangle(*self.get_bb())
+
     def draw(self):
         if self.state == Right:
             if self.index == 0:
@@ -59,6 +60,8 @@ class bullet:
                bullet.image_bullet.clip_draw(0, 0 ,30,11,self.x,self.y)
             elif self.index == 2:
                bullet.image_Para_bullet.clip_draw(0, 0 ,52,49,self.x,self.y)
+        self.draw_bb()
+
 
 
 class Genji:
@@ -78,7 +81,7 @@ class Genji:
         self.image_skill_cooltime_u = load_image('겐지스킬아이콘.png')
 
         
-        self.x, self.y, self.z = 100, 50 , 0
+        self.x, self.y, self.z = 100, 250 , 0
         self.Skill_1_OnOff = True; # True가 스킬 on임
         self.bodyframe = 0
         self.attackstate = 0 #공격상태
@@ -92,10 +95,10 @@ class Genji:
         self.ult_flag = 0 #궁극기 모션 플레그
         self.KEYCHECK_LEFT, self.KEYCHECK_RIGHT = 0, 0  # 키눌림용 변수
         self.KEYCHECK_UP, self.KEYCHECK_DOWN = 0, 0
-
+        self.NUM_SKILL_ON = self.image_skill_cooltime_u.h
         self.cool_shift = 0
         self.cool_protect =0
-        self.cool_ult =104
+        self.cool_ult =self.NUM_SKILL_ON
 
 
 
@@ -122,10 +125,10 @@ class Genji:
         if self.KEYCHECK_RIGHT == 1:
             self.x = min(1180,self.x+4)
         if self.KEYCHECK_DOWN == 1:
-            self.y = max(50, self.y-3)
+            self.y = max(120, self.y-3)
         if self.KEYCHECK_UP == 1:
             if self.jumpcount == 0:
-                self.y = min(350, self.y+3)
+                self.y = min(380, self.y+3)
 
         if self.jumpcount > 0:
             self.jump_num -= 2
@@ -177,7 +180,8 @@ class Genji:
                         self.image.clip_draw(self.bodyframe * 300, 300, 300, 300, self.x, self.y)
                     elif self.attackstate == 1 and self.jumpstate == False:
                         self.image.clip_draw(self.attackframe * 300, 0, 300, 300, self.x, self.y)
-    
+
+
 
             elif self.genjistate == Left:  # 겐지가 왼쪽볼때
 
@@ -217,14 +221,19 @@ class Genji:
                 if self.drawnum == 6:
                      self.Skill_1_OnOff = True;
             self.draw_bb()
+            nw = self.image_skill_cooltime_n.w//2
+            nh = self.image_skill_cooltime_n.h//2
+            uw = self.image_skill_cooltime_u.w//2
+            uh = self.image_skill_cooltime_u.h
 
-            self.image_skill_cooltime_n.clip_draw(0,0,115,104,700,500)# 질풍참 쿨
-            self.image_skill_cooltime_n.clip_draw(0, 104, 115, 104 -self.cool_shift, 700, 500 -self.cool_shift/2)  # 질풍참 온
+            self.image_skill_cooltime_n.clip_draw(0,0,nw,nh,700,50)# 질풍참 쿨
+            self.image_skill_cooltime_n.clip_draw(0, nh, nw, nh -self.cool_shift, 700, 50 -self.cool_shift/2)  # 질풍참 온
 
-            self.image_skill_cooltime_n.clip_draw(116,0,115, 104, 805, 500)#튕기기 쿨
-            self.image_skill_cooltime_u.clip_draw(104, 0, 104, 104, 400, 500)  # 궁극기 클
-            self.image_skill_cooltime_u.clip_draw(0,0,104,104- self.cool_ult, 400,500- self.cool_ult/2) #궁극기 온
+            self.image_skill_cooltime_n.clip_draw(nw +1 ,0,nw, nh, 700+ nw, 50)#튕기기 쿨
 
+            self.image_skill_cooltime_u.clip_draw(uw, 0, uw, uw, 500, 50)  # 궁극기 클
+            self.image_skill_cooltime_u.clip_draw(0,0,uw,uw- self.cool_ult, 500,50- self.cool_ult/2) #궁극기 온
+            debug_print('x=%d, y=%d' % (self.x, self.y))
 
 
     def handle_events(self,event):
@@ -272,13 +281,14 @@ class Genji:
                                 self.x = max(20, self.x - 350)
                             self.drawnum = 0
                             self.Skill_1_OnOff = False;
-                            self.cool_shift= 104
+                            self.cool_shift= self.NUM_SKILL_ON
                         else :
                             print("쿨타임 질풍참")
 
                 elif event.key == SDLK_q:
                         if self.cool_ult <=0:
                             self.ult_OnOFF = True
+                            self.cool_ult = self.NUM_SKILL_ON
 
 
             if event.type == SDL_KEYUP:

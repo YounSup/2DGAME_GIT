@@ -18,6 +18,7 @@ def enter():
     menu = Menu()
     hero = genji.Genji()
     enemy.enemys.append(enemy.Robot(500,200))
+    enemy.enemys.append(enemy.Sold(150,380))
     back = background.Background()
 
 
@@ -34,6 +35,9 @@ def handle_events():
 
 
 def update():
+
+
+
     hero.update()
     genji.bullet_update()
     enemy.enemys_update()
@@ -44,11 +48,12 @@ def update():
 def draw():
     clear_canvas()
     back.draw()
-    hero.draw()
-    genji.bullet_draw()
+
     enemy.enemys_draw()
     if menu.Menu_OnOff == True:
         menu.draw()
+    hero.draw()
+    genji.bullet_draw()
     update_canvas()
 
 
