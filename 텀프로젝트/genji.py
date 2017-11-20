@@ -13,10 +13,16 @@ class bullet:
         self.Rotateangle =0
         self.state = STATE
         self.delete = False
+
+
+
+        
         if bullet.image == None:
             bullet.image = load_image('겐지표창.png')
             bullet.image_bullet = load_image('총알.png')
             bullet.image_Para_bullet=load_image('파라총알.png')
+
+
 
     def update(self):
         global genji_bullet_num
@@ -90,6 +96,10 @@ class Genji:
         self.cool_shift = 0
         self.cool_protect =0
         self.cool_ult =104
+
+
+
+        
     def update(self):
         global i
         self.bodyframe = (self.bodyframe + 1) % 13
@@ -214,6 +224,8 @@ class Genji:
             self.image_skill_cooltime_n.clip_draw(116,0,115, 104, 805, 500)#튕기기 쿨
             self.image_skill_cooltime_u.clip_draw(104, 0, 104, 104, 400, 500)  # 궁극기 클
             self.image_skill_cooltime_u.clip_draw(0,0,104,104- self.cool_ult, 400,500- self.cool_ult/2) #궁극기 온
+
+
 
     def handle_events(self,event):
             if event.type == SDL_KEYDOWN:

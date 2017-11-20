@@ -4,12 +4,8 @@ import title_state
 import start_state
 import genji
 import enemy
+import background
 
-class Map:
-    def __init__(self):
-        self.image = load_image('testmap.png')
-    def draw(self):
-        self.image.draw(600,300)
 class Menu:
     def __init__(self):
         self.image = load_image('인게임메뉴.png')
@@ -18,11 +14,12 @@ class Menu:
         self.image.draw(600,300)
 
 def enter():
-    global hero, stage, menu
+    global hero, stage, menu, back
     menu = Menu()
     hero = genji.Genji()
     enemy.enemys.append(enemy.Robot(500,200))
-    stage = Map()
+    back = background.Background()
+
 
 def exit():
     del(hero)
@@ -35,14 +32,18 @@ def handle_events():
         else:
             hero.handle_events(event)
 
+
 def update():
     hero.update()
     genji.bullet_update()
     enemy.enemys_update()
+
     clear_canvas()
     delay(0.020)
+    
 def draw():
-    stage.draw()
+    clear_canvas()
+    back.draw()
     hero.draw()
     genji.bullet_draw()
     enemy.enemys_draw()
