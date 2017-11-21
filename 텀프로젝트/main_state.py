@@ -1,10 +1,12 @@
 ﻿from pico2d import*
+import effect
 import game_framework
 import title_state
 import start_state
 import genji
 import enemy
 import background
+
 
 class Menu:
     def __init__(self):
@@ -19,8 +21,8 @@ def enter():
     hero = genji.Genji()
     enemy.enemys.append(enemy.Robot(500,200))
     enemy.enemys.append(enemy.Sold(150,380))
-    #enemy.enemys.append(enemy.Reinhard(800,350))
-    #enemy.enemys.append(enemy.Para(1000,500))
+    enemy.enemys.append(enemy.Reinhard(800,350))
+    enemy.enemys.append(enemy.Para(1000,500,200))
     back = background.Background()
 
 
@@ -38,16 +40,15 @@ def handle_events(frame_time):
 
 def update(frame_time):
 
-   # print("ㄹㅇ")
     hero.update(frame_time)
     genji.bullet_update(frame_time)
     enemy.enemys_update(frame_time)
-
+    effect.damage_update(frame_time)
     for bullet in  genji.throw_knife:
         for enemys in enemy.enemys:
             if collision(bullet, enemys):
-                print(enemys. x)
-                print("충돌")
+                bullet.delete= True
+                effect.damage_effect.append(effect.Effect_damage(bullet.x, bullet.y))
     clear_canvas()
     delay(0.020)
 
@@ -59,6 +60,7 @@ def draw(frame_time):
         menu.draw()
     hero.draw()
     genji.bullet_draw(frame_time)
+    effect.damage_draw(frame_time)
     update_canvas()
 
 
@@ -71,5 +73,5 @@ def collision(a,b):
     if ra<lb: return False
     if ta<bb: return False
     if ba>tb: return False
-    if az != bz: return False
+    if az-bz >0 :return False
     return True

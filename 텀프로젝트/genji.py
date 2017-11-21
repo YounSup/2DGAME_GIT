@@ -1,4 +1,5 @@
 ﻿from pico2d import*
+import enemy
 Right, Left = 0,1
 throw_knife=[]
 i =0
@@ -243,7 +244,8 @@ class Genji:
             self.image_skill_cooltime_u.clip_draw(0,0,uw,uw- self.cool_ult, 500,50- self.cool_ult/2) #궁극기 온
             debug_print('x=%d, y=%d z=%d' % (self.x, self.y, self.z))
 
-
+            draw_rectangle(self.x, self.y, self.x + 350, self.y - 70)
+            draw_rectangle(self.x, self.y, self.x - 350, self.y - 70)
     def handle_events(self,event):
             if event.type == SDL_KEYDOWN:
                 if event.key == SDLK_LEFT:
@@ -284,12 +286,25 @@ class Genji:
                 elif event.key == SDLK_LSHIFT and self.Skill_1_OnOff == True:
                         if self.cool_shift ==0 :
                             if self.genjistate == 0:
+                                for ene in enemy.enemys:
+                                    lx,ty,rx,by = ene.get_bb()
+                                    if collision(ene, self.x, self.y, self.x + 350, self.y - 70, self.z):
+                                        ene.x= 20
+
                                 self.x = min(1180, self.x + 350)
+
                             elif self.genjistate == 1:
+                                for ene in enemy.enemys:
+                                    lx,ty,rx,by = ene.get_bb()
+                                    if collision(ene, self.x-350, self.y, self.x, self.y - 70,self.z):
+                                        ene.x= 50
                                 self.x = max(20, self.x - 350)
                             self.drawnum = 0
                             self.Skill_1_OnOff = False;
                             self.cool_shift= self.NUM_SKILL_ON
+
+
+
                         else :
                             print("쿨타임 질풍참")
 
@@ -325,3 +340,14 @@ def bullet_update(frame_time):
 def bullet_draw(frame_time):
     for bullet in throw_knife:
         bullet.draw()
+
+
+def collision(a,lx,ty,rx,by,bz):
+    la,ba,ra,ta = a.get_bb()
+    az = a.z
+    if la>rx: return False
+    if ra<lx: return False
+    if ta<by: return False
+    if ba>ty: return False
+    if az - bz < 0: return False
+    return True
