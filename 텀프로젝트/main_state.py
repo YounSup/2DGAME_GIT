@@ -19,6 +19,8 @@ def enter():
     hero = genji.Genji()
     enemy.enemys.append(enemy.Robot(500,200))
     enemy.enemys.append(enemy.Sold(150,380))
+    enemy.enemys.append(enemy.Reinhard(800,350))
+    enemy.enemys.append(enemy.Para(1000,500))
     back = background.Background()
 
 

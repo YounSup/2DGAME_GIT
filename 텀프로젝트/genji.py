@@ -39,7 +39,7 @@ class bullet:
             self.delete = True
 
     def get_bb(self):
-        return self.x - 10, self.y - 10, self.x + 10, self.y + 10
+        return self.x - 10, self.y - 120 , self.x + 10, self.y - 100
 
     def draw_bb(self):
         draw_rectangle(*self.get_bb())
@@ -78,6 +78,7 @@ class Genji:
         self.image_ult_attack_right =[load_image('용검Right공격1.png'), load_image('용검Right공격2.png')]
         self.image_ult_attack_left = [load_image('용검Left공격1.png'), load_image('용검Left공격2.png')]
         self.image_skill_cooltime_n = load_image('겐지스킬.png')
+        self.image_shadow = load_image('그림자.png')
         self.image_skill_cooltime_u = load_image('겐지스킬아이콘.png')
 
         
@@ -102,7 +103,7 @@ class Genji:
 
 
 
-        
+
     def update(self):
         global i
         self.bodyframe = (self.bodyframe + 1) % 13
@@ -130,6 +131,7 @@ class Genji:
             if self.jumpcount == 0:
                 self.y = min(380, self.y+3)
 
+
         if self.jumpcount > 0:
             self.jump_num -= 2
             self.y += self.jump_num
@@ -149,11 +151,15 @@ class Genji:
 
         i+=1
     def get_bb(self):
-        return self.x-30, self.y-30, self.x+30, self.y+90
+        return self.x-30, self.y-60, self.x+30, self.y-30
     def draw_bb(self):
         draw_rectangle(*self.get_bb())
 
     def draw(self): #출력부분
+            if self.jumpcount>0:
+                self.image_shadow.draw(self.x, self.savey - 65, self.image_shadow.w // 2, self.image_shadow.h)
+            else:
+                self.image_shadow.draw(self.x, self.y - 65, self.image_shadow.w // 2, self.image_shadow.h)
             if self.genjistate == Right:  # 겐지가 오른쪽볼때
                 if self.ult_OnOFF == True:
                     if self.ult_flag == 0: #공격키를 안눌르면 플레그 =0
@@ -210,6 +216,8 @@ class Genji:
                         self.imageleft.clip_draw(self.bodyframe * 300, 300, 300, 300, self.x, self.y)
                     elif self.attackstate == 1 and self.jumpstate == False:
                         self.imageleft.clip_draw(self.attackframe * 300, 0, 300, 300, self.x, self.y)
+
+
 
             # 이펙트는 앞에
             if self.Skill_1_OnOff == False:

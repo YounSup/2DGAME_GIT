@@ -3,6 +3,7 @@ from genji import *
 
 enemys= []
 LEFT, RIGHT = 0 ,1
+i = 0
 class Robot:
     image = [None, None]
     def __init__(c, x, y, z=0, dir = 1):
@@ -35,7 +36,7 @@ class Robot:
         c.idle()
 
     def get_bb(self):
-        return self.x - 25, self.y - 25, self.x + 25, self.y + 25
+        return self.x - 25, self.y - 50, self.x + 25, self.y-25
 
     def draw_bb(self):
         draw_rectangle(*self.get_bb())
@@ -70,13 +71,18 @@ class Reinhard:
     def update(c):
         c.frame = (c.frame+1)%2
         c.idle()
-        
+    def get_bb(self):
+        return self.x - 50, self.y - 75, self.x + 40, self.y-50
+
+    def draw_bb(self):
+        draw_rectangle(*self.get_bb())
+
     def draw(c):
         if c.dir == LEFT:
             Reinhard.image.clip_draw(c.frame * 199, 177 ,199,177,c.x,c.y)
         else:
             Reinhard.image.clip_draw(c.frame * 199, 0 ,199,177,c.x,c.y)
-
+        c.draw_bb()
 class Sold:
     image = None
     def __init__(c, x, y, z=0, dir = 1):
@@ -102,7 +108,7 @@ class Sold:
                 c.count =0
                 c.dir =RIGHT
     def get_bb(self):
-        return self.x - 30, self.y - 60, self.x + 30, self.y + 60
+        return self.x - 30, self.y - 60, self.x + 30, self.y  -30
 
     def draw_bb(self):
         draw_rectangle(*self.get_bb())
@@ -127,6 +133,7 @@ class Sold:
 class Para:
     image = None
     image_boost = None
+    image_shadow = None
     def __init__(c, x, y, z=0, dir = 1):
         c.x, c.y, c.z = x,y, z
         c.damage, c.speed = 0, 0
@@ -137,23 +144,28 @@ class Para:
         if Para.image == None:
             Para.image = load_image('파라.png')
             Para.image_boost = load_image('파라부스터W200.png')
+            Para.image_shadow = load_image('그림자.png')
 
     def idle(c):
         if c.dir == RIGHT:
             c.x += 5
-            c.y += 1
+
             c.count += 1
             if c.count == 30:
                 c.count = 0
                 c.dir = LEFT
         elif c.dir == LEFT:
             c.x -= 5
-            c.y -=1
+
             c.count += 1
             if c.count == 30:
                 c.count = 0
                 c.dir = RIGHT
+    def get_bb(self):
+        return self.x - 25, self.y - 180, self.x + 25, self.y-50
 
+    def draw_bb(self):
+        draw_rectangle(*self.get_bb())
     def update(c):
         c.frame = (c.frame+1)%3
         c.idle()
@@ -166,8 +178,8 @@ class Para:
         else:
             Para.image_boost.clip_draw(c.frame * 200, 0, 200, 150, c.x - 50, c.y + 20, 100, 75)
             Para.image.clip_draw(300, 0, 300, 275, c.x, c.y,150,137)
-
-
+        c.draw_bb()
+        Para.image_shadow.draw(c.x, c.y - 300, Para.image_shadow.w//2, Para.image_shadow.h)
     def attack(c):
         if c.dir == Right:
             throw_knife.append(bullet(c.x -75, c.y - 45, c.z, Left, 2))
@@ -177,8 +189,11 @@ class Para:
 
 
 def enemys_update():
-    for enemy in enemys:
-        enemy.update()
+    global i
+    if i %2 == 0:
+        for enemy in enemys:
+            enemy.update()
+    i+=1
 def enemys_draw():
     for enemy in enemys:
         enemy.draw()
