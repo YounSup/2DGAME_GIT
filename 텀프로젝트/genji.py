@@ -19,7 +19,7 @@ class bullet:
             bullet.image_bullet = load_image('총알.png')
             bullet.image_Para_bullet=load_image('파라총알.png')
 
-    def update(self):
+    def update(self,frame):
         global genji_bullet_num
 
         if self.index <2:
@@ -104,7 +104,7 @@ class Genji:
 
 
 
-    def update(self):
+    def update(self, frame):
         global i
         self.bodyframe = (self.bodyframe + 1) % 13
 
@@ -317,11 +317,11 @@ class Genji:
                     self.KEYCHECK_DOWN = 0
 
 
-def bullet_update():
+def bullet_update(frame_time):
     for bullet in throw_knife:
-        bullet.update()
+        bullet.update(frame_time)
         if bullet.delete == True:
             throw_knife.remove(bullet)
-def bullet_draw():
+def bullet_draw(frame_time):
     for bullet in throw_knife:
         bullet.draw()

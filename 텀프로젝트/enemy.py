@@ -31,7 +31,7 @@ class Robot:
                 c.count =0
                 c.dir =RIGHT
                 
-    def update(c):
+    def update(c, frame):
         c.frame = (c.frame+1)%4
         c.idle()
 
@@ -68,7 +68,7 @@ class Reinhard:
             if c.count == 50:
                 c.count =0
                 c.dir =RIGHT
-    def update(c):
+    def update(c, frame):
         c.frame = (c.frame+1)%2
         c.idle()
     def get_bb(self):
@@ -112,7 +112,7 @@ class Sold:
 
     def draw_bb(self):
         draw_rectangle(*self.get_bb())
-    def update(c):
+    def update(c, frame):
         c.frame = (c.frame+1)%9
         c.idle()
 
@@ -166,7 +166,7 @@ class Para:
 
     def draw_bb(self):
         draw_rectangle(*self.get_bb())
-    def update(c):
+    def update(c,frame):
         c.frame = (c.frame+1)%3
         c.idle()
 
@@ -188,13 +188,13 @@ class Para:
 
 
 
-def enemys_update():
+def enemys_update(frame_time):
     global i
     if i %2 == 0:
         for enemy in enemys:
-            enemy.update()
+            enemy.update(frame_time)
     i+=1
-def enemys_draw():
+def enemys_draw(frame_time):
     for enemy in enemys:
         enemy.draw()
 

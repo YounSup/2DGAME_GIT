@@ -27,7 +27,7 @@ def enter():
 def exit():
     del(hero)
 
-def handle_events():
+def handle_events(frame_time):
     events = get_events()
     for event in events:
         if event.type == SDL_QUIT:
@@ -36,26 +36,24 @@ def handle_events():
             hero.handle_events(event)
 
 
-def update():
+def update(frame_time):
 
-
-
-    hero.update()
-    genji.bullet_update()
-    enemy.enemys_update()
+    hero.update(frame_time)
+    genji.bullet_update(frame_time)
+    enemy.enemys_update(frame_time)
 
     clear_canvas()
     delay(0.020)
     
-def draw():
+def draw(frame_time):
     clear_canvas()
     back.draw()
 
-    enemy.enemys_draw()
+    enemy.enemys_draw(frame_time)
     if menu.Menu_OnOff == True:
         menu.draw()
     hero.draw()
-    genji.bullet_draw()
+    genji.bullet_draw(frame_time)
     update_canvas()
 
 
