@@ -20,8 +20,6 @@ class bullet:
             bullet.image_Para_bullet=load_image('파라총알.png')
 
     def update(self,frame):
-        global genji_bullet_num
-
         if self.index <2:
             if self.state == Right:
                 self.x += self.speed
@@ -135,9 +133,11 @@ class Genji:
         if self.jumpcount > 0:
             self.jump_num -= 2
             self.y += self.jump_num
+            self.z += self.jump_num
             if self.y < self.savey:
                 self.y = self.savey
                 self.jumpcount = 0
+                self.z =0
 
 
 
@@ -241,7 +241,7 @@ class Genji:
 
             self.image_skill_cooltime_u.clip_draw(uw, 0, uw, uw, 500, 50)  # 궁극기 클
             self.image_skill_cooltime_u.clip_draw(0,0,uw,uw- self.cool_ult, 500,50- self.cool_ult/2) #궁극기 온
-            debug_print('x=%d, y=%d' % (self.x, self.y))
+            debug_print('x=%d, y=%d z=%d' % (self.x, self.y, self.z))
 
 
     def handle_events(self,event):

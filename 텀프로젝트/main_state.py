@@ -19,8 +19,8 @@ def enter():
     hero = genji.Genji()
     enemy.enemys.append(enemy.Robot(500,200))
     enemy.enemys.append(enemy.Sold(150,380))
-    enemy.enemys.append(enemy.Reinhard(800,350))
-    enemy.enemys.append(enemy.Para(1000,500))
+    #enemy.enemys.append(enemy.Reinhard(800,350))
+    #enemy.enemys.append(enemy.Para(1000,500))
     back = background.Background()
 
 
@@ -38,15 +38,20 @@ def handle_events(frame_time):
 
 def update(frame_time):
 
+   # print("ㄹㅇ")
     hero.update(frame_time)
     genji.bullet_update(frame_time)
     enemy.enemys_update(frame_time)
 
+    for bullet in  genji.throw_knife:
+        for enemys in enemy.enemys:
+            if collision(bullet, enemys):
+                print(enemys. x)
+                print("충돌")
     clear_canvas()
     delay(0.020)
-    
+
 def draw(frame_time):
-    clear_canvas()
     back.draw()
 
     enemy.enemys_draw(frame_time)
@@ -57,4 +62,14 @@ def draw(frame_time):
     update_canvas()
 
 
+def collision(a,b):
+    la,ba,ra,ta = a.get_bb()
+    lb,bb,rb,tb = b.get_bb()
+    az ,bz = a.z, b.z
 
+    if la>rb: return False
+    if ra<lb: return False
+    if ta<bb: return False
+    if ba>tb: return False
+    if az != bz: return False
+    return True
