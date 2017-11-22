@@ -64,6 +64,7 @@ class bullet:
 
 
 class Genji:
+    font = None
     def __init__(self):
         self.image = load_image('겐지스프라이트.png')
         self.imageleft = load_image('겐지스프라이트왼쪽.png')
@@ -79,8 +80,12 @@ class Genji:
         self.image_skill_cooltime_n = load_image('겐지스킬.png')
         self.image_shadow = load_image('그림자.png')
         self.image_skill_cooltime_u = load_image('겐지스킬아이콘.png')
+        self.image_profile= load_image('겐지초상화.png')
+        self.image_HP = load_image('겐지체력.png')
+        self.text="200/ 200"
+        if (Genji.font == None):
+            Genji.font = load_font('koverwatch.ttf',40)
 
-        
         self.x, self.y, self.z = 100, 250 , 0
         self.Skill_1_OnOff = True; # True가 스킬 on임
         self.bodyframe = 0
@@ -99,7 +104,8 @@ class Genji:
         self.cool_shift = 0
         self.cool_protect =0
         self.cool_ult =self.NUM_SKILL_ON
-
+        self.hp = 200
+        self.save_frame=0
 
 
 
@@ -130,7 +136,6 @@ class Genji:
             if self.jumpcount == 0:
                 self.y = min(380, self.y+3)
 
-
         if self.jumpcount > 0:
             self.jump_num -= 2
             self.y += self.jump_num
@@ -140,8 +145,6 @@ class Genji:
                 self.jumpcount = 0
                 self.z =0
 
-
-
         if self.cool_shift >0:
             self.cool_shift -=1
         if self.cool_protect>0:
@@ -150,6 +153,10 @@ class Genji:
         if self.cool_ult>0 and i%10 ==0:
             self.cool_ult-=1
 
+        if self.ult_OnOFF== True:
+            self.save_frame += frame
+            if self.save_frame>=7:
+                self.ult_OnOFF = False
         i+=1
     def get_bb(self):
         return self.x-30, self.y-60, self.x+30, self.y-30
@@ -244,9 +251,21 @@ class Genji:
             self.image_skill_cooltime_u.clip_draw(0,0,uw,uw- self.cool_ult, 500,50- self.cool_ult/2) #궁극기 온
             debug_print('x=%d, y=%d z=%d' % (self.x, self.y, self.z))
 
-            draw_rectangle(self.x, self.y, self.x + 350, self.y - 70)
-            draw_rectangle(self.x, self.y, self.x - 350, self.y - 70)
-    def handle_events(self,event):
+            #draw_rectangle(self.x, self.y, self.x + 350, self.y - 70)
+            #draw_rectangle(self.x, self.y, self.x - 350, self.y - 70)
+            self.image_profile.draw(100,70)
+
+            for i in range(self.hp//25):
+                self.image_HP.draw(180+i*27,50+i)
+            if(self.text !=""):
+                w = len(self.text)*10
+                h = 30
+                x = 220 - w/2
+                y = 100 - h/2
+                self.font.draw(x,y,self.text,(200,200,200))
+
+
+    def handle_events(self,event,frame_time):
             if event.type == SDL_KEYDOWN:
                 if event.key == SDLK_LEFT:
                     self.genjistate = 1
@@ -312,6 +331,8 @@ class Genji:
                         if self.cool_ult <=0:
                             self.ult_OnOFF = True
                             self.cool_ult = self.NUM_SKILL_ON
+                            self.save_frame =0
+
 
 
             if event.type == SDL_KEYUP:

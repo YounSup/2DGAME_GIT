@@ -36,7 +36,7 @@ class Robot:
         c.idle()
 
     def get_bb(self):
-        return self.x - 25, self.y - 50, self.x + 25, self.y-25
+        return self.x - 25, self.y - 70, self.x + 25, self.y-45
 
     def draw_bb(self):
         draw_rectangle(*self.get_bb())

@@ -35,7 +35,7 @@ def handle_events(frame_time):
         if event.type == SDL_QUIT:
             game_framework.quit()
         else:
-            hero.handle_events(event)
+            hero.handle_events(event,frame_time)
 
 
 def update(frame_time):
