@@ -1,5 +1,6 @@
 ﻿from pico2d import*
 import enemy
+import effect
 Right, Left = 0,1
 throw_knife=[]
 i =0
@@ -14,31 +15,44 @@ class bullet:
         self.Rotateangle =0
         self.state = STATE
         self.delete = False
-
+        self.out = False
         if bullet.image == None:
             bullet.image = load_image('겐지표창.png')
             bullet.image_bullet = load_image('총알.png')
             bullet.image_Para_bullet=load_image('파라총알.png')
 
     def update(self,frame):
-        if self.index <2:
-            if self.state == Right:
-                self.x += self.speed
-            elif self.state == Left:
-                self.x -= self.speed
-        elif self.index ==2:
-            if self.state == Right:
-                self.x += self.speed
-                self.y -= self.speed-10
-            elif self.state == Left:
-                self.x -= self.speed
-                self.y -= self.speed-10
+        if self.out == False:
+            if self.index <2:
+                if self.state == Right:
+                    self.x += self.speed
+                elif self.state == Left:
+                    self.x -= self.speed
+            elif self.index ==2:
+                if self.state == Right:
+                    self.x += self.speed
+                    self.y -= self.speed-10
+                elif self.state == Left:
+                    self.x -= self.speed
+                    self.y -= self.speed-10
+        elif self.out == True:
+            if self.index <2:
+                if self.state == Left:
+                    self.x -= self.speed
+                    self.y += self.speed//2
+                elif self.state == Right:
+                    self.x += self.speed
+                    self.y += self.speed//2
+
         self.Rotateangle +=60
         if self.x >=1200 or self.x <=0:
             self.delete = True
 
     def get_bb(self):
-        return self.x - 10, self.y - 120 , self.x + 10, self.y - 100
+        if self.index == 0:
+            return self.x - 10, self.y - 120 , self.x + 10, self.y - 100
+        elif self.index == 1:
+            return self.x - 10, self.y - 80, self.x + 10, self.y  -60
 
     def draw_bb(self):
         draw_rectangle(*self.get_bb())
@@ -82,7 +96,6 @@ class Genji:
         self.image_skill_cooltime_u = load_image('겐지스킬아이콘.png')
         self.image_profile= load_image('겐지초상화.png')
         self.image_HP = load_image('겐지체력.png')
-        self.text="200/ 200"
         if (Genji.font == None):
             Genji.font = load_font('koverwatch.ttf',40)
 
@@ -106,7 +119,8 @@ class Genji:
         self.cool_ult =self.NUM_SKILL_ON
         self.hp = 200
         self.save_frame=0
-
+        self.protect_frame =0
+        self.protect_onoff = False
 
 
     def update(self, frame):
@@ -157,6 +171,12 @@ class Genji:
             self.save_frame += frame
             if self.save_frame>=7:
                 self.ult_OnOFF = False
+
+        if self.protect_onoff== True:
+            self.protect_frame += frame
+            if self.protect_frame>=1:
+                self.protect_onoff = False
+                self.protect_frame=0
         i+=1
     def get_bb(self):
         return self.x-30, self.y-60, self.x+30, self.y-30
@@ -245,7 +265,8 @@ class Genji:
             self.image_skill_cooltime_n.clip_draw(0,0,nw,nh,700,50)# 질풍참 쿨
             self.image_skill_cooltime_n.clip_draw(0, nh, nw, nh -self.cool_shift, 700, 50 -self.cool_shift/2)  # 질풍참 온
 
-            self.image_skill_cooltime_n.clip_draw(nw +1 ,0,nw, nh, 700+ nw, 50)#튕기기 쿨
+            self.image_skill_cooltime_n.clip_draw(nw +1 ,0  ,nw,    nh,                      700+ nw,        50)#튕기기 쿨
+            self.image_skill_cooltime_n.clip_draw(nw + 1, nh, nw, nh-self.cool_protect, 700 + nw, 50-self.cool_protect/2)  # 튕기기 쿨
 
             self.image_skill_cooltime_u.clip_draw(uw, 0, uw, uw, 500, 50)  # 궁극기 클
             self.image_skill_cooltime_u.clip_draw(0,0,uw,uw- self.cool_ult, 500,50- self.cool_ult/2) #궁극기 온
@@ -255,14 +276,15 @@ class Genji:
             #draw_rectangle(self.x, self.y, self.x - 350, self.y - 70)
             self.image_profile.draw(100,70)
 
+            if self.protect_onoff == True:
+                if self.genjistate == Right:
+                    draw_rectangle(self.x+30, self.y-70, self.x +70, self.y )
+                else:
+                    draw_rectangle(self.x - 30, self.y - 70, self.x- 70, self.y)
             for i in range(self.hp//25):
                 self.image_HP.draw(180+i*27,50+i)
-            if(self.text !=""):
-                w = len(self.text)*10
-                h = 30
-                x = 220 - w/2
-                y = 100 - h/2
-                self.font.draw(x,y,self.text,(200,200,200))
+
+            self.font.draw(180,85,'200/%d' %self.hp,(200,200,200))
 
 
     def handle_events(self,event,frame_time):
@@ -290,8 +312,19 @@ class Genji:
                         else:
                             throw_knife.append(bullet(self.x - 80, self.y + 60, self.z, Left,0))
                     else:
+                        if self.genjistate == Right:
+                            for ene in enemy.enemys:
+                                lx, ty, rx, by = ene.get_bb()
+                                if collision(ene, self.x, self.y, self.x+200 , self.y - 70, self.z):
+                                    effect.damage_effect.append(effect.Effect_damage(ene.x, ene.y + 50))
+                        else:
+                            for ene in enemy.enemys:
+                                lx, ty, rx, by = ene.get_bb()
+                                if collision(ene, self.x-200, self.y, self.x , self.y - 70, self.z):
+                                    effect.damage_effect.append(effect.Effect_damage(ene.x, ene.y + 50))
                         self.ult_attacknum += 1
                         self.ult_flag = 1
+
 
                 elif event.key == SDLK_LALT:
                         if self.jumpcount < 2:
@@ -308,7 +341,7 @@ class Genji:
                                 for ene in enemy.enemys:
                                     lx,ty,rx,by = ene.get_bb()
                                     if collision(ene, self.x, self.y, self.x + 350, self.y - 70, self.z):
-                                        ene.x= 20
+                                        effect.damage_effect.append(effect.Effect_damage(ene.x, ene.y+50))
 
                                 self.x = min(1180, self.x + 350)
 
@@ -316,14 +349,11 @@ class Genji:
                                 for ene in enemy.enemys:
                                     lx,ty,rx,by = ene.get_bb()
                                     if collision(ene, self.x-350, self.y, self.x, self.y - 70,self.z):
-                                        ene.x= 50
+                                        effect.damage_effect.append(effect.Effect_damage(ene.x, ene.y + 50))
                                 self.x = max(20, self.x - 350)
                             self.drawnum = 0
                             self.Skill_1_OnOff = False;
                             self.cool_shift= self.NUM_SKILL_ON
-
-
-
                         else :
                             print("쿨타임 질풍참")
 
@@ -332,7 +362,10 @@ class Genji:
                             self.ult_OnOFF = True
                             self.cool_ult = self.NUM_SKILL_ON
                             self.save_frame =0
-
+                elif event.key == SDLK_e:
+                    if self.cool_protect <= 0:
+                        self.protect_onoff = True
+                        self.cool_protect = self.NUM_SKILL_ON
 
 
             if event.type == SDL_KEYUP:

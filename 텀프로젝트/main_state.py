@@ -20,7 +20,7 @@ def enter():
     menu = Menu()
     hero = genji.Genji()
     enemy.enemys.append(enemy.Robot(500,200))
-    enemy.enemys.append(enemy.Sold(150,380))
+    enemy.enemys.append(enemy.Sold(150,250))
     enemy.enemys.append(enemy.Reinhard(800,350))
     enemy.enemys.append(enemy.Para(1000,500,200))
     back = background.Background()
@@ -44,11 +44,28 @@ def update(frame_time):
     genji.bullet_update(frame_time)
     enemy.enemys_update(frame_time)
     effect.damage_update(frame_time)
+
+
     for bullet in  genji.throw_knife:
-        for enemys in enemy.enemys:
-            if collision(bullet, enemys):
-                bullet.delete= True
-                effect.damage_effect.append(effect.Effect_damage(bullet.x, bullet.y))
+        if bullet.index == 0:
+            for enemys in enemy.enemys: #겐치 표창과 적이 충돌중
+                if collision(bullet, enemys):
+                    bullet.delete= True
+                    effect.damage_effect.append(effect.Effect_damage(bullet.x, bullet.y))
+
+        elif bullet.index >= 1:  #적총알과 겐지 충돌중
+            if collision(bullet, hero) and  hero.protect_onoff == False:
+                bullet.delete = True
+                effect.damage_effect.append(effect.Effect_damage(hero.x, hero.y+100))
+                hero.hp -= 10
+            elif collision(bullet, hero) and  hero.protect_onoff == True:
+                bullet.out = True
+                if bullet.state == 0:
+                    bullet.state = 1
+                else :
+                    bullet.state = 0
+
+
     clear_canvas()
     delay(0.020)
 

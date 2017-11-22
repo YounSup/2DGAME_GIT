@@ -1,5 +1,5 @@
 from pico2d import *
-from genji import *
+import genji
 
 enemys= []
 LEFT, RIGHT = 0 ,1
@@ -92,6 +92,7 @@ class Sold:
         c.dir = dir
         c.frame =0
         c.count =0
+        c.attack_frametime=0
         if Sold.image == None:
             Sold.image = load_image('sold.png')
     def idle(c):
@@ -115,8 +116,11 @@ class Sold:
     def update(c, frame):
         c.frame = (c.frame+1)%9
         c.idle()
-
-        
+        c.attack_frametime += frame
+        if c.attack_frametime >=0.1:
+            c.attack()
+            c.attack_frametime=0
+        print(c.attack_frametime)
     def draw(c):
         if c.dir == LEFT:
             Sold.image.clip_draw(c.frame * 300, 300 ,300,300,c.x,c.y)
@@ -124,10 +128,10 @@ class Sold:
             Sold.image.clip_draw(c.frame * 300, 0 ,300,300,c.x,c.y)
         c.draw_bb()
     def attack(c):
-        if c.dir == Right:
-            throw_knife.append(bullet(c.x+30, c.y+15, c.z, Left,1))
+        if c.dir == RIGHT:
+            genji.throw_knife.append(genji.bullet(c.x+ 75, c.y+15, c.z, LEFT,1))
         else:
-            throw_knife.append(bullet(c.x-30, c.y+15, c.z, Right,1))
+            genji.throw_knife.append(genji.bullet(c.x-75 , c.y+15, c.z, RIGHT,1))
 
 
 class Para:
@@ -181,10 +185,10 @@ class Para:
         c.draw_bb()
         Para.image_shadow.draw(c.x, c.y - 300, Para.image_shadow.w//2, Para.image_shadow.h)
     def attack(c):
-        if c.dir == Right:
-            throw_knife.append(bullet(c.x -75, c.y - 45, c.z, Left, 2))
+        if c.dir == RIGHT:
+            genji.throw_knife.append(genji.bullet(c.x -75, c.y - 45, c.z, LEFT, 2))
         else:
-            throw_knife.append(bullet(c.x +75, c.y - 45, c.z, Right, 2))
+            genji.throw_knife.append(genji.bullet(c.x +75, c.y - 45, c.z, RIGHT, 2))
 
 
 
