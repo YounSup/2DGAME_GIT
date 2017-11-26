@@ -120,7 +120,6 @@ class Sold:
         if c.attack_frametime >=0.1:
             c.attack()
             c.attack_frametime=0
-        print(c.attack_frametime)
     def draw(c):
         if c.dir == LEFT:
             Sold.image.clip_draw(c.frame * 300, 300 ,300,300,c.x,c.y)

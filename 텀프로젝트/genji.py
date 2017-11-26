@@ -3,6 +3,9 @@ import enemy
 import effect
 Right, Left = 0,1
 throw_knife=[]
+#black = effect.Effect_Balck_IO()
+
+
 i =0
 class bullet:
     image = None
@@ -96,6 +99,7 @@ class Genji:
         self.image_skill_cooltime_u = load_image('겐지스킬아이콘.png')
         self.image_profile= load_image('겐지초상화.png')
         self.image_HP = load_image('겐지체력.png')
+        self.image_inventory = load_image('인벤토리.png')
         if (Genji.font == None):
             Genji.font = load_font('koverwatch.ttf',40)
 
@@ -177,6 +181,8 @@ class Genji:
             if self.protect_frame>=1:
                 self.protect_onoff = False
                 self.protect_frame=0
+        #if black.state ==0:
+        #    black.update()
         i+=1
     def get_bb(self):
         return self.x-30, self.y-60, self.x+30, self.y-30
@@ -285,7 +291,9 @@ class Genji:
                 self.image_HP.draw(180+i*27,50+i)
 
             self.font.draw(180,85,'200/%d' %self.hp,(200,200,200))
-
+            self.image_inventory.draw(1000,50)
+            #if black.state == 0:
+            #    black.draw()
 
     def handle_events(self,event,frame_time):
             if event.type == SDL_KEYDOWN:
@@ -362,6 +370,9 @@ class Genji:
                             self.ult_OnOFF = True
                             self.cool_ult = self.NUM_SKILL_ON
                             self.save_frame =0
+                            effect.damage_effect.append(effect.Effect_genji_ult(self.x, self.y+30))
+                            
+                            #black.state =0
                 elif event.key == SDLK_e:
                     if self.cool_protect <= 0:
                         self.protect_onoff = True

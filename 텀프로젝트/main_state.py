@@ -16,7 +16,8 @@ class Menu:
         self.image.draw(600,300)
 
 def enter():
-    global hero, stage, menu, back
+    global hero, stage, menu, back, black
+    black = effect.Effect_Balck_IO()
     menu = Menu()
     hero = genji.Genji()
     enemy.enemys.append(enemy.Robot(500,200))
@@ -24,6 +25,7 @@ def enter():
     enemy.enemys.append(enemy.Reinhard(800,350))
     enemy.enemys.append(enemy.Para(1000,500,200))
     back = background.Background()
+    effect.damage_effect.append(effect.Effect_genji_ult(-1000, -1100))
 
 
 def exit():
@@ -52,7 +54,8 @@ def update(frame_time):
                 if collision(bullet, enemys):
                     bullet.delete= True
                     effect.damage_effect.append(effect.Effect_damage(bullet.x, bullet.y))
-
+                    effect.damage_effect.append(effect.Effect_genji_bullet(enemys.x, enemys.y))
+                   
         elif bullet.index >= 1:  #적총알과 겐지 충돌중
             if collision(bullet, hero) and  hero.protect_onoff == False:
                 bullet.delete = True
