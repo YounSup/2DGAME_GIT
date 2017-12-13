@@ -16,7 +16,7 @@ class Menu:
         self.image.draw(600,300)
 
 def enter():
-    global hero, stage, menu, back, black
+    global hero, stage, menu, back, black,t
     black = effect.Effect_Balck_IO()
     menu = Menu()
     hero = genji.Genji()
@@ -24,6 +24,7 @@ def enter():
    # enemy.enemys.append(enemy.Sold(150,250))
     #enemy.enemys.append(enemy.Reinhard(800,350))
     #enemy.enemys.append(enemy.Para(1000,500,200))
+    t = enemy.Dragon()
     back = background.Background()
     effect.damage_effect.append(effect.Effect_genji_ult(-1000, -1100))
 
@@ -46,7 +47,7 @@ def update(frame_time):
     genji.bullet_update(frame_time)
     enemy.enemys_update(frame_time)
     effect.damage_update(frame_time)
-
+    t.update(frame_time)
 
     for bullet in  genji.throw_knife:
         if bullet.index == 0:
@@ -88,6 +89,7 @@ def draw(frame_time):
     hero.draw()
     genji.bullet_draw(frame_time)
     effect.damage_draw(frame_time)
+    t.draw()
     update_canvas()
 
 

@@ -1,6 +1,7 @@
 from pico2d import *
 import genji
 import main_state
+import math
 enemys= []
 LEFT, RIGHT = 0 ,1
 i = 0
@@ -254,7 +255,7 @@ class Hanjo:
                 c.count =0
                 c.dir =RIGHT
     def get_bb(self):
-        return self.x - 30, self.y - 60, self.x + 30, self.y  -30
+        return self.x - 30, self.y - 85, self.x + 30, self.y  -55
     def get_bb2(self):
         return self.x - 200, self.y - 90, self.x + 200, self.y + 60
     def draw_bb(self):
@@ -265,18 +266,21 @@ class Hanjo:
         else:
             self.dir = LEFT
         if main_state.hero.jumpcount == 0:
-            my = (main_state.hero.y - self.y) // 10
+            my = ((main_state.hero.y+40)- self.y) // 10
             self.y += my
+
 
     def update(c, frame):
         c.frame = (c.frame+1)%2
-        c.idle()
+
         c.attack_frametime += frame
         if c.attack_frametime >=0.1:
             c.attack()
             c.attack_frametime=0
         if c.state == 1:
             c.Attack()
+        else:
+            c.idle()
     def draw(c):
         if c.dir == LEFT:
             Hanjo.image.clip_draw(c.frame * 300, 250 ,300,250,c.x,c.y,300//1.2, 250//1.2)
@@ -285,12 +289,41 @@ class Hanjo:
         c.draw_bb()
     def attack(c):
         if c.dir == RIGHT:
-            genji.throw_knife.append(genji.bullet(c.x+ 75, c.y+15, c.z, LEFT,1))
+            genji.throw_knife.append(genji.bullet(c.x+ 110, c.y-6, c.z, LEFT,3))
         else:
-            genji.throw_knife.append(genji.bullet(c.x-75 , c.y+15, c.z, RIGHT,1))
+            genji.throw_knife.append(genji.bullet(c.x-110 , c.y-6, c.z, RIGHT,3))
 
 
+class Dragon:
+    image_head = None
+    image_body = None
+    image_tail = None
+    shadow = None
+    def __init__(self, X=1150, Y=300):
+        self.x =X
+        self.y =Y
+        if Dragon.image_head==None:
+            Dragon.image_head = load_image('D1.png')
+            Dragon.image_body = load_image('D2.png')
+            Dragon.image_tail = load_image('D3.png')
+            Dragon.shadow = load_image('그림자.png')
+    def get_bb(self):
+        return self.x-70 , self.y - 120, self.x + 660, self.y-160
+    def draw_bb(self):
+        draw_rectangle(*self.get_bb())
+    def update(self, frame_time):
+        self.x -=5
+    def draw(self):
 
+        for i in range(15):
+            if i ==14:
+                Dragon.image_tail.draw(self.x + 41 * (i + 1),self.y + (40 * math.sin(math.radians(self.x + (i + 1) * 20))))
+            else:
+                Dragon.image_body.draw(self.x + 40 * (i + 1), self.y + (40 * math.sin(math.radians(self.x + (i + 1) * 20))))
+
+        Dragon.image_head.draw(self.x, self.y + (40*math.sin(math.radians(self.x))))
+        Dragon.shadow.draw(self.x+300, self.y - 150,750,21)
+        self.draw_bb()
 def enemys_update(frame_time):
     global i
     if i %2 == 0:

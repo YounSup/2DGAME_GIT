@@ -11,6 +11,7 @@ class bullet:
     image = None
     image_bullet = None
     image_Para_bullet = None
+    image_Hanjo_bullet = None
     def __init__(self ,X, Y,Z, STATE, INDEX):
         self.index = INDEX
         self.x, self.y, self.z =X,Y,Z
@@ -23,9 +24,9 @@ class bullet:
             bullet.image = load_image('겐지표창.png')
             bullet.image_bullet = load_image('총알.png')
             bullet.image_Para_bullet=load_image('파라총알.png')
-
+            bullet.image_Hanjo_bullet = load_image('Hanjoarrow.png')
     def update(self,frame):
-        if self.out == False:
+        if self.out == False:#화살이 평상시에 나가는것
             if self.index <2:
                 if self.state == Right:
                     self.x += self.speed
@@ -38,6 +39,11 @@ class bullet:
                 elif self.state == Left:
                     self.x -= self.speed
                     self.y -= self.speed-10
+            elif self.index==3:
+                if self.state == Right:
+                    self.x += self.speed
+                elif self.state == Left:
+                    self.x -= self.speed
         elif self.out == True:
             if self.index <2:
                 if self.state == Left:
@@ -55,6 +61,14 @@ class bullet:
                     self.x -= self.speed
                     self.y -= self.speed-10
 
+            elif self.index==3:
+                if self.state == Left:
+                    self.x -= self.speed
+                    self.y += self.speed // 2
+                elif self.state == Right:
+                    self.x += self.speed
+                    self.y += self.speed // 2
+
         self.Rotateangle +=60
         if self.x >=1200 or self.x <=0:
             self.delete = True
@@ -66,6 +80,8 @@ class bullet:
             return self.x - 10, self.y - 80, self.x + 10, self.y  -60
         elif self.index == 2:
             return self.x - 10, self.y - 80, self.x + 10, self.y  -60
+        elif self.index == 3:
+            return self.x - 10, self.y - 80, self.x + 10, self.y - 60
 
     def draw_bb(self):
         draw_rectangle(*self.get_bb())
@@ -78,6 +94,8 @@ class bullet:
                 bullet.image_bullet.clip_draw(30, 0 ,30,11,self.x,self.y)
             elif self.index == 2:
                 bullet.image_Para_bullet.clip_draw(0, 0 ,52,49,self.x,self.y)
+            elif self.index == 3:
+                bullet.image_Hanjo_bullet.clip_draw(243, 0, 243, 19, self.x, self.y, 243//2.5, 19//2)
 
         elif self.state == Left:
             if self.index ==0:
@@ -86,6 +104,8 @@ class bullet:
                bullet.image_bullet.clip_draw(0, 0 ,30,11,self.x,self.y)
             elif self.index == 2:
                bullet.image_Para_bullet.clip_draw(0, 0 ,52,49,self.x,self.y)
+            elif self.index == 3:
+                bullet.image_Hanjo_bullet.clip_draw(0, 0, 243, 19, self.x, self.y, 243//2.5 , 19//2 )
         self.draw_bb()
 
 
