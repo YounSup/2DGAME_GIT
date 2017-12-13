@@ -227,6 +227,68 @@ class Para:
         Para.image_shadow.draw(c.x, c.y - 300, Para.image_shadow.w//2, Para.image_shadow.h)
 
 
+class Hanjo:
+    image = None
+    def __init__(c, x, y, z=0, dir = 1):
+        c.x,c.y,c.z = x, y, z
+        c.damage, c.speed = 0,0
+        c.state= 0
+        c.dir = dir
+        c.frame =0
+        c.count =0
+        c.hp = 15000
+        c.attack_frametime=0
+        if Hanjo.image == None:
+            Hanjo.image = load_image('한조.png')
+    def idle(c):
+        if c.dir == RIGHT :
+            c.x += 5
+            c.count +=1
+            if c.count == 60:
+                c.count =0
+                c.dir =LEFT
+        elif c.dir == LEFT:
+            c.x -= 5
+            c.count +=1
+            if c.count == 60:
+                c.count =0
+                c.dir =RIGHT
+    def get_bb(self):
+        return self.x - 30, self.y - 60, self.x + 30, self.y  -30
+    def get_bb2(self):
+        return self.x - 200, self.y - 90, self.x + 200, self.y + 60
+    def draw_bb(self):
+        draw_rectangle(*self.get_bb())
+    def Attack(self):
+        if main_state.hero.x > self.x:
+            self.dir = RIGHT
+        else:
+            self.dir = LEFT
+        if main_state.hero.jumpcount == 0:
+            my = (main_state.hero.y - self.y) // 10
+            self.y += my
+
+    def update(c, frame):
+        c.frame = (c.frame+1)%2
+        c.idle()
+        c.attack_frametime += frame
+        if c.attack_frametime >=0.1:
+            c.attack()
+            c.attack_frametime=0
+        if c.state == 1:
+            c.Attack()
+    def draw(c):
+        if c.dir == LEFT:
+            Hanjo.image.clip_draw(c.frame * 300, 250 ,300,250,c.x,c.y,300//1.2, 250//1.2)
+        else:
+            Hanjo.image.clip_draw(c.frame * 300, 0 ,300,250,c.x,c.y,300//1.2, 250//1.2)
+        c.draw_bb()
+    def attack(c):
+        if c.dir == RIGHT:
+            genji.throw_knife.append(genji.bullet(c.x+ 75, c.y+15, c.z, LEFT,1))
+        else:
+            genji.throw_knife.append(genji.bullet(c.x-75 , c.y+15, c.z, RIGHT,1))
+
 
 
 def enemys_update(frame_time):
