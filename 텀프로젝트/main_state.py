@@ -55,6 +55,7 @@ def update(frame_time):
                     bullet.delete= True
                     effect.damage_effect.append(effect.Effect_damage(bullet.x, bullet.y))
                     effect.damage_effect.append(effect.Effect_genji_bullet(enemys.x, enemys.y))
+                    enemys.hp -= bullet.damage
                    
         elif bullet.index >= 1:  #적총알과 겐지 충돌중
             if collision(bullet, hero) and  hero.protect_onoff == False:
@@ -68,6 +69,12 @@ def update(frame_time):
                 else :
                     bullet.state = 0
 
+    for enemys in enemy.enemys:
+        if collision2(hero, enemys):
+            enemys.state =1
+        if collision(hero, enemys):
+            hero.hp-=1
+            effect.damage_effect.append(effect.Effect_damage(hero.x, hero.y + 100))
 
     clear_canvas()
     delay(0.020)
@@ -87,6 +94,19 @@ def draw(frame_time):
 def collision(a,b):
     la,ba,ra,ta = a.get_bb()
     lb,bb,rb,tb = b.get_bb()
+    az ,bz = a.z, b.z
+
+    if la>rb: return False
+    if ra<lb: return False
+    if ta<bb: return False
+    if ba>tb: return False
+    if az-bz >0 :return False
+    return True
+
+
+def collision2(a,b):
+    la,ba,ra,ta = a.get_bb()
+    lb,bb,rb,tb = b.get_bb2()
     az ,bz = a.z, b.z
 
     if la>rb: return False

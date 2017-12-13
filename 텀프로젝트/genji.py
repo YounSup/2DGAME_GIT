@@ -47,6 +47,14 @@ class bullet:
                     self.x += self.speed
                     self.y += self.speed//2
 
+            elif self.index ==2:
+                if self.state == Right:
+                    self.x += self.speed
+                    self.y -= self.speed-10
+                elif self.state == Left:
+                    self.x -= self.speed
+                    self.y -= self.speed-10
+
         self.Rotateangle +=60
         if self.x >=1200 or self.x <=0:
             self.delete = True
@@ -55,6 +63,8 @@ class bullet:
         if self.index == 0:
             return self.x - 10, self.y - 120 , self.x + 10, self.y - 100
         elif self.index == 1:
+            return self.x - 10, self.y - 80, self.x + 10, self.y  -60
+        elif self.index == 2:
             return self.x - 10, self.y - 80, self.x + 10, self.y  -60
 
     def draw_bb(self):
@@ -325,11 +335,13 @@ class Genji:
                                 lx, ty, rx, by = ene.get_bb()
                                 if collision(ene, self.x, self.y, self.x+200 , self.y - 70, self.z):
                                     effect.damage_effect.append(effect.Effect_damage(ene.x, ene.y + 50))
+                                    ene.hp -= 120
                         else:
                             for ene in enemy.enemys:
                                 lx, ty, rx, by = ene.get_bb()
                                 if collision(ene, self.x-200, self.y, self.x , self.y - 70, self.z):
                                     effect.damage_effect.append(effect.Effect_damage(ene.x, ene.y + 50))
+                                    ene.hp -=120
                         self.ult_attacknum += 1
                         self.ult_flag = 1
 
@@ -350,6 +362,7 @@ class Genji:
                                     lx,ty,rx,by = ene.get_bb()
                                     if collision(ene, self.x, self.y, self.x + 350, self.y - 70, self.z):
                                         effect.damage_effect.append(effect.Effect_damage(ene.x, ene.y+50))
+                                        ene.hp-= 100
 
                                 self.x = min(1180, self.x + 350)
 
@@ -358,6 +371,7 @@ class Genji:
                                     lx,ty,rx,by = ene.get_bb()
                                     if collision(ene, self.x-350, self.y, self.x, self.y - 70,self.z):
                                         effect.damage_effect.append(effect.Effect_damage(ene.x, ene.y + 50))
+                                        ene.hp -= 100
                                 self.x = max(20, self.x - 350)
                             self.drawnum = 0
                             self.Skill_1_OnOff = False;

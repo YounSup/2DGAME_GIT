@@ -7,3 +7,4 @@ class Background:
 
     def draw(self):
         Background.image.draw(600,300)
+i
