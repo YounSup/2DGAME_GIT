@@ -42,8 +42,7 @@ def loadScores():
     f = open(fileName, "rb")
     scores = pickle.load(f)
     f.close()
-    for i in scores:
-        ss.append(i.score)
+
 
 
 def SaveScores():
@@ -62,7 +61,7 @@ def enter():
     mt =0
     menu = Menu()
     hero = genji.Genji()
-
+    loadScores()
 
     #enemy.enemys.append(enemy.Hanjo(500,200))
     #enemy.enemys.append(enemy.Dragon(1200,300))
@@ -139,8 +138,10 @@ def update(frame_time):
 
     if enemy.enemys == [] and finish == False and show_rank == False:#몬스터를 다 잡았을때
         if st_num ==3: #클리어하고 기록해야함
-            entry = Entry(max((int)(st_num*1000 - time_score*50),0), time_score)
+            entry = Entry(max((int)(st_num*1000 - time_score*50),0), time_score, st_num)
             add(entry)
+
+            score_sort()
             show_rank = True
         if show_rank == False:
             effect.damage_effect.append(effect.Effect_Balck_IO())
@@ -180,11 +181,13 @@ def draw(frame_time):
     effect.damage_draw(frame_time)
     k = 0
     if show_rank:
-        loadScores()
-        for i in scores:
-            hero.font.draw(200, 300 + 50 * k, '스테이지: %d' % i.stage, (200, 200, 200))
-            hero.font.draw(300, 300 + 50 * k, '최종점수: %d' % i.score, (200, 200, 200))
-            hero.font.draw(500, 300 + 50 * k, 'Time: %f' % i.time, (200, 200, 200))
+        hero.font.draw(350, 530 , '순위   스테이지     최종점수        Time', (200, 200, 200))
+        for i in ss:
+            if k <=9:
+                hero.font.draw(360, 480 - 40 * k, '%d' % (k+1), (200, 200, 200))
+                hero.font.draw(460, 480 - 40 * k, '%d' % i.stage, (200, 200, 200))
+                hero.font.draw(590, 480 - 40 * k, '%d' % i.score, (200, 200, 200))
+                hero.font.draw(720, 480 - 40 * k, '%f' % i.time, (200, 200, 200))
             k += 1
     #for i in ss:
         #print(i)
@@ -220,3 +223,20 @@ def collision2(a,b):
     if ba>tb: return False
     if az-bz >0 :return False
     return True
+
+
+def score_sort():
+    global ss
+    tempar= scores
+    for j in range(len(tempar)):
+        temp = 0
+        savei= 0
+        for i in range(len(tempar)):
+            if tempar[i].score > temp:
+                temp = tempar[i].score
+                savei =i
+        ss.append(Entry(tempar[savei].score,tempar[savei].time,tempar[savei].stage))
+        for i in tempar:
+            if i.score == temp:
+                tempar.remove(i)
+                break
