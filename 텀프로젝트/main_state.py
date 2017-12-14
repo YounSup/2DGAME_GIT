@@ -216,8 +216,10 @@ def update(frame_time):
 def draw(frame_time):
     global time_score,st_num, rank_image, DRAGON
     back.draw()
-    hero.font.draw(400, 570, 'Stage:%d' % st_num, (255, 00, 00))
-    hero.font.draw(550, 570, 'Time:%f' % time_score, (255, 00, 00))
+    rank_image.draw(565, 570, rank_image.w // 2, rank_image.h // 8)
+    hero.font.draw(400, 570, 'Stage:%d' % st_num, (250, 250, 250))
+    hero.font.draw(550, 570, 'Time:%f' % time_score, (250, 250, 250))
+
     enemy.enemys_draw(frame_time)
     if menu.Menu_OnOff == True:
         menu.draw()
