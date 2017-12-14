@@ -9,7 +9,7 @@ import background
 import pickle
 import time
 
-
+DRAGON = []
 scores = []
 ss= []
 k= 0
@@ -54,8 +54,9 @@ def SaveScores():
 
 
 def enter():
-    global hero, menu, back, st_num ,finish, mt, current_time, time_score, rank_image , show_rank , scores, ss,MAX_STAGE, dragon_time
+    global hero, menu, back, st_num ,finish, mt, current_time, time_score, rank_image , show_rank , scores, ss,MAX_STAGE, dragon_time,DRAGON
     dragon_time =0
+    DRAGON = []
     current_time = get_time()
     show_rank = False
     time_score = 0.0
@@ -100,7 +101,7 @@ def handle_events(frame_time):
 
 
 def update(frame_time):
-    global  mt,finish, st_num, current_time, time_score, show_rank, MAX_STAGE, dragon_time
+    global  mt,finish, st_num, current_time, time_score, show_rank, MAX_STAGE, dragon_time, DRAGON
     if show_rank == False:
         time_score = get_time() - current_time
 
@@ -111,16 +112,14 @@ def update(frame_time):
 
     if st_num ==6:
         dragon_time+=1
-        if dragon_time >500:
-            enemy.enemys.append(enemy.Dragon(1400, hero.y + 200))
-            enemy.enemys.append(enemy.Dragon(1400, hero.y + 100))
-            enemy.enemys.append(enemy.Dragon(1400, hero.y ))
+        if dragon_time >750:
+            DRAGON.append(enemy.Dragon(1400, hero.y + 200))
+            DRAGON.append(enemy.Dragon(1400, hero.y + 100))
+            DRAGON.append(enemy.Dragon(1400, hero.y ))
             dragon_time =0
-        for i in enemy.enemys:
-            if i.dragon:
-                st_num+=1
-                show_rank== True
 
+    for i in DRAGON:
+        i.update(frame_time)
 
     for bullet in  genji.throw_knife:
         if bullet.index == 0:
@@ -152,6 +151,11 @@ def update(frame_time):
             hero.hp = max(hero.hp - enemys.damage, 0)
             effect.damage_effect.append(effect.Effect_damage(hero.x, hero.y + 100))
 
+    for i in DRAGON:
+        if collision(hero, i) and hero.vlrur == False: # 겐지와 적 몸박
+            hero.vlrur = True
+            hero.hp = max(hero.hp - i.damage, 0)
+            effect.damage_effect.append(effect.Effect_damage(hero.x, hero.y + 100))
 
     if hero.alive == False and show_rank == False:
         entry = Entry(max((int)((st_num)*1000+(st_num)*200 - time_score*25),0), time_score, st_num)
@@ -159,7 +163,8 @@ def update(frame_time):
         score_sort()
         show_rank = True
     if enemy.enemys == [] and finish == False and show_rank == False and hero.alive:#몬스터를 다 잡았을때
-        if st_num ==MAX_STAGE+1: #클리어하고 기록해야함
+        if st_num ==MAX_STAGE: #클리어하고 기록해야함
+            st_num+=1
             entry = Entry(max((int)((st_num)*1000+(st_num)*200 - time_score*25),0), time_score, st_num)
             add(entry)
             score_sort()
@@ -209,7 +214,7 @@ def update(frame_time):
 
 
 def draw(frame_time):
-    global time_score,st_num, rank_image
+    global time_score,st_num, rank_image, DRAGON
     back.draw()
     hero.font.draw(400, 570, 'Stage:%d' % st_num, (255, 00, 00))
     hero.font.draw(550, 570, 'Time:%f' % time_score, (255, 00, 00))
@@ -220,6 +225,9 @@ def draw(frame_time):
     genji.bullet_draw(frame_time)
     effect.damage_draw(frame_time)
     k = 0
+    for i in DRAGON:
+        i.draw()
+
     if show_rank:
         rank_image.draw(600, 300)
         hero.font.draw(350, 530 , '순위   스테이지     최종점수        Time', (200, 200, 200))

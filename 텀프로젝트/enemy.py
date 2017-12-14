@@ -249,6 +249,7 @@ class Dragon:
         self.z =0
         self.state, self.hp =0 , 1000
         self.damage = 25
+        self.i =0
         self.dragon =False
         if Dragon.image_head==None:
             Dragon.image_head = load_image('D1.png')
@@ -265,9 +266,12 @@ class Dragon:
         draw_rectangle(*self.get_bb())
 
     def update(self, frame_time):
-        self.x -=5
-        if self.x <-800:
-            self.state = 3
+        if i%2==0:
+            self.x -=5
+            if self.x <-800:
+                self.state = 3
+
+        self.i+=1
     def draw(self):
 
         for i in range(15):
