@@ -66,7 +66,7 @@ class Robot:
         draw_rectangle(*self.get_bb2())
     def draw(c):
             Robot.image[c.dir].clip_draw(c.frame * 90,0,90,86,c.x,c.y)
-            c.draw_bb()
+
 class Reinhard:
     image = None
     def __init__(c, x, y, z=0, dir = 1):
@@ -102,7 +102,7 @@ class Reinhard:
             Reinhard.image.clip_draw(c.frame * 199, 177 ,199,177,c.x,c.y)
         else:
             Reinhard.image.clip_draw(c.frame * 199, 0 ,199,177,c.x,c.y)
-        c.draw_bb()
+
 class Sold:
     image = None
     def __init__(c, x, y, z=0, dir = 1):
@@ -161,7 +161,7 @@ class Sold:
             Sold.image.clip_draw(c.frame * 300, 300 ,300,300,c.x,c.y)
         else:
             Sold.image.clip_draw(c.frame * 300, 0 ,300,300,c.x,c.y)
-        c.draw_bb()
+
     def attack(c):
         if c.dir == RIGHT:
             genji.throw_knife.append(genji.bullet(c.x+ 75, c.y+15, c.z, LEFT,1))
@@ -230,7 +230,7 @@ class Para:
         else:
             Para.image_boost.clip_draw(c.frame * 200, 0, 200, 150, c.x - 50, c.y + 20, 100, 75)
             Para.image.clip_draw(300, 0, 300, 275, c.x, c.y,150,137)
-        c.draw_bb()
+
         Para.image_shadow.draw(c.x, c.y - 300, Para.image_shadow.w//2, Para.image_shadow.h)
 
 
@@ -274,7 +274,7 @@ class Dragon:
 
         Dragon.image_head.draw(self.x, self.y + (40*math.sin(math.radians(self.x))))
         Dragon.shadow.draw(self.x+300, self.y - 150,750,21)
-        self.draw_bb()
+
 class Hanjo:
     image = None
     def __init__(c, x, y, z=0, dir = 1):
@@ -329,7 +329,7 @@ class Hanjo:
             Hanjo.image.clip_draw(c.frame * 300, 250 ,300,250,c.x,c.y,300//1.2, 250//1.2)
         else:
             Hanjo.image.clip_draw(c.frame * 300, 0 ,300,250,c.x,c.y,300//1.2, 250//1.2)
-        c.draw_bb()
+
     def attack(c):
         if c.dir == RIGHT:
             genji.throw_knife.append(genji.bullet(c.x+ 110, c.y-6, c.z, LEFT,3))

@@ -152,6 +152,8 @@ class Genji:
         self.image_profile= load_image('겐지초상화.png')
         self.image_HP = load_image('겐지체력.png')
         self.image_inventory = load_image('인벤토리.png')
+        self.death_image = load_image('겐지사망.png')
+        self.potion_image = load_image('힐팩.png')
         if (Genji.font == None):
             Genji.font = load_font('koverwatch.ttf',40)
             Genji.sound_jilpung= load_wav('jilpung.wav')
@@ -182,12 +184,15 @@ class Genji:
         self.protect_onoff = False
         self.vlrur = False
         self.vlrur_num =0
+        self.alive = True
+        self.potion =5
 
 
     def update(self, frame):
         global i
         self.bodyframe = (self.bodyframe + 1) % 13
-
+        if self.hp ==0:
+            self.alive = False
         if self.vlrur == True:
             self.vlrur_num += 1
             if self.vlrur_num >30:
@@ -253,79 +258,83 @@ class Genji:
         draw_rectangle(*self.get_bb())
 
     def draw(self): #출력부분
-            if self.jumpcount>0:
-                self.image_shadow.draw(self.x, self.savey - 65, self.image_shadow.w // 2, self.image_shadow.h)
-            else:
-                self.image_shadow.draw(self.x, self.y - 65, self.image_shadow.w // 2, self.image_shadow.h)
-            if self.genjistate == Right:  # 겐지가 오른쪽볼때
-                if self.ult_OnOFF == True:
-                    if self.ult_flag == 0: #공격키를 안눌르면 플레그 =0
-                        self.image_Right_Ult.clip_draw(self.bodyframe * 300, 300, 300, 300, self.x+40, self.y+40)
-                    elif self.ult_flag >0:
-                        if self.ult_attacknum%2 == 0:
-                            self.image_ult_attack_right[0].draw(self.x+40, self.y+40,300,300)
-                        else:
-                            self.image_ult_attack_right[1].draw(self.x + 80, self.y + 40, 300, 300)
-                        self.ult_flag +=1
-                        if self.ult_flag == 5:
-                            self.ult_flag =0
-                    self.image_Right_Ult.clip_draw(self.bodyframe * 300, 0, 300, 300, self.x+40, self.y+40)
-                else: #궁극기 아닐때
-                    if self.jumpcount == 0:
-                        self.image.clip_draw(self.bodyframe * 300, 600, 300, 300, self.x, self.y)
-                    elif self.jumpcount >=1:
-                        if self.jumpstate == False:
-                           self.image_Rightjump.clip_draw(0, 0, 300, 300, self.x, self.y)
-                        else:
-                           self.image_Rightjump.clip_draw(300*self.jumpframe, 0, 300, 300, self.x, self.y)
 
-                    if self.attackstate == 0 and self.jumpstate == False: #팔 출력부분
-                        self.image.clip_draw(self.bodyframe * 300, 300, 300, 300, self.x, self.y)
-                    elif self.attackstate == 1 and self.jumpstate == False:
-                        self.image.clip_draw(self.attackframe * 300, 0, 300, 300, self.x, self.y)
+            if self.alive:
+                if self.jumpcount>0:
+                    self.image_shadow.draw(self.x, self.savey - 65, self.image_shadow.w // 2, self.image_shadow.h)
+                else:
+                    self.image_shadow.draw(self.x, self.y - 65, self.image_shadow.w // 2, self.image_shadow.h)
+                if self.genjistate == Right:  # 겐지가 오른쪽볼때
+                    if self.ult_OnOFF == True:
+                        if self.ult_flag == 0: #공격키를 안눌르면 플레그 =0
+                            self.image_Right_Ult.clip_draw(self.bodyframe * 300, 300, 300, 300, self.x+40, self.y+40)
+                        elif self.ult_flag >0:
+                            if self.ult_attacknum%2 == 0:
+                                self.image_ult_attack_right[0].draw(self.x+40, self.y+40,300,300)
+                            else:
+                                self.image_ult_attack_right[1].draw(self.x + 80, self.y + 40, 300, 300)
+                            self.ult_flag +=1
+                            if self.ult_flag == 5:
+                                self.ult_flag =0
+                        self.image_Right_Ult.clip_draw(self.bodyframe * 300, 0, 300, 300, self.x+40, self.y+40)
+                    else: #궁극기 아닐때
+                        if self.jumpcount == 0:
+                            self.image.clip_draw(self.bodyframe * 300, 600, 300, 300, self.x, self.y)
+                        elif self.jumpcount >=1:
+                            if self.jumpstate == False:
+                               self.image_Rightjump.clip_draw(0, 0, 300, 300, self.x, self.y)
+                            else:
+                               self.image_Rightjump.clip_draw(300*self.jumpframe, 0, 300, 300, self.x, self.y)
+
+                        if self.attackstate == 0 and self.jumpstate == False: #팔 출력부분
+                            self.image.clip_draw(self.bodyframe * 300, 300, 300, 300, self.x, self.y)
+                        elif self.attackstate == 1 and self.jumpstate == False:
+                            self.image.clip_draw(self.attackframe * 300, 0, 300, 300, self.x, self.y)
 
 
 
-            elif self.genjistate == Left:  # 겐지가 왼쪽볼때
+                elif self.genjistate == Left:  # 겐지가 왼쪽볼때
 
-                if self.ult_OnOFF == True:
-                    if self. ult_flag ==0:
-                        self.image_LEFT_Ult.clip_draw(self.bodyframe * 300, 300, 300, 300, self.x-40, self.y+40)
-                    elif self.ult_flag > 0:
-                        if self.ult_attacknum % 2 == 0:
-                            self.image_ult_attack_left[0].draw(self.x - 40, self.y + 40, 300, 300)
-                        else:
-                            self.image_ult_attack_left[1].draw(self.x - 80, self.y + 40, 300, 300)
-                        self.ult_flag += 1
-                        if self.ult_flag == 5:
-                            self.ult_flag = 0
-                    self.image_LEFT_Ult.clip_draw(self.bodyframe * 300, 0, 300, 300, self.x+-40, self.y+40)
-                else: #궁극기 아닐때
-                    if self.jumpcount == 0:
-                        self.imageleft.clip_draw(self.bodyframe * 300, 600, 300, 300, self.x, self.y)
-                    elif self.jumpcount >=1:
-                        if self.jumpstate == False:
-                           self.image_Leftjump.clip_draw(0, 0, 300, 300, self.x, self.y)
-                        else:
-                           self.image_Leftjump.clip_draw(300*self.jumpframe, 0, 300, 300, self.x, self.y)
+                    if self.ult_OnOFF == True:
+                        if self. ult_flag ==0:
+                            self.image_LEFT_Ult.clip_draw(self.bodyframe * 300, 300, 300, 300, self.x-40, self.y+40)
+                        elif self.ult_flag > 0:
+                            if self.ult_attacknum % 2 == 0:
+                                self.image_ult_attack_left[0].draw(self.x - 40, self.y + 40, 300, 300)
+                            else:
+                                self.image_ult_attack_left[1].draw(self.x - 80, self.y + 40, 300, 300)
+                            self.ult_flag += 1
+                            if self.ult_flag == 5:
+                                self.ult_flag = 0
+                        self.image_LEFT_Ult.clip_draw(self.bodyframe * 300, 0, 300, 300, self.x+-40, self.y+40)
+                    else: #궁극기 아닐때
+                        if self.jumpcount == 0:
+                            self.imageleft.clip_draw(self.bodyframe * 300, 600, 300, 300, self.x, self.y)
+                        elif self.jumpcount >=1:
+                            if self.jumpstate == False:
+                               self.image_Leftjump.clip_draw(0, 0, 300, 300, self.x, self.y)
+                            else:
+                               self.image_Leftjump.clip_draw(300*self.jumpframe, 0, 300, 300, self.x, self.y)
 
-                    if self.attackstate == 0 and self.jumpstate == False: #팔 출력부분
-                        self.imageleft.clip_draw(self.bodyframe * 300, 300, 300, 300, self.x, self.y)
-                    elif self.attackstate == 1 and self.jumpstate == False:
-                        self.imageleft.clip_draw(self.attackframe * 300, 0, 300, 300, self.x, self.y)
+                        if self.attackstate == 0 and self.jumpstate == False: #팔 출력부분
+                            self.imageleft.clip_draw(self.bodyframe * 300, 300, 300, 300, self.x, self.y)
+                        elif self.attackstate == 1 and self.jumpstate == False:
+                            self.imageleft.clip_draw(self.attackframe * 300, 0, 300, 300, self.x, self.y)
 
 
 
             # 이펙트는 앞에
-            if self.Skill_1_OnOff == False:
-                if self.genjistate == 0:
-                    self.image_Skill[self.drawnum].draw(self.x - 150, self.y + 20, 750, 192)
-                if self.genjistate == 1:
-                    self.image_Skill[self.drawnum].draw(self.x + 150, self.y + 20, 750, 192)
-                self.drawnum += 1
-                if self.drawnum == 6:
-                     self.Skill_1_OnOff = True;
-            self.draw_bb()
+                if self.Skill_1_OnOff == False:
+                    if self.genjistate == 0:
+                        self.image_Skill[self.drawnum].draw(self.x - 150, self.y + 20, 750, 192)
+                    if self.genjistate == 1:
+                        self.image_Skill[self.drawnum].draw(self.x + 150, self.y + 20, 750, 192)
+                    self.drawnum += 1
+                    if self.drawnum == 6:
+                         self.Skill_1_OnOff = True;
+
+            else:
+                self.death_image.draw(self.x,self.y)
             nw = self.image_skill_cooltime_n.w//2
             nh = self.image_skill_cooltime_n.h//2
             uw = self.image_skill_cooltime_u.w//2
@@ -339,7 +348,9 @@ class Genji:
 
             self.image_skill_cooltime_u.clip_draw(uw, 0, uw, uw, 500, 50)  # 궁극기 클
             self.image_skill_cooltime_u.clip_draw(0,0,uw,uw- self.cool_ult, 500,50- self.cool_ult/2) #궁극기 온
-            debug_print('x=%d, y=%d z=%d' % (self.x, self.y, self.z))
+            for i in range(self.potion):
+                self.potion_image.draw(900+ i*50,50,self.potion_image.w//7,self.potion_image.h//7)
+            #debug_print('x=%d, y=%d z=%d' % (self.x, self.y, self.z))
 
             #draw_rectangle(self.x, self.y, self.x + 350, self.y - 70)
             #draw_rectangle(self.x, self.y, self.x - 350, self.y - 70)
@@ -354,11 +365,12 @@ class Genji:
                 self.image_HP.draw(180+i*27,50+i)
 
             self.font.draw(180,85,'200/%d' %self.hp,(200,200,200))
-            self.image_inventory.draw(1000,50)
+            #self.image_inventory.draw(1000,50)
             #if black.state == 0:
             #    black.draw()
 
     def handle_events(self,event,frame_time):
+        if self.alive:
             if event.type == SDL_KEYDOWN:
                 if event.key == SDLK_LEFT:
                     self.genjistate = 1
@@ -398,7 +410,10 @@ class Genji:
                                     ene.hp -=120
                         self.ult_attacknum += 1
                         self.ult_flag = 1
-
+                elif event.key == SDLK_1:
+                    if self.potion>=1:
+                        self.hp = min(self.hp+100, 200)
+                        self.potion-=1
 
                 elif event.key == SDLK_LALT:
                         if self.jumpcount < 2:

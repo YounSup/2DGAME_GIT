@@ -54,7 +54,7 @@ def SaveScores():
 
 
 def enter():
-    global hero, menu, back, st_num ,finish, mt, current_time, time_score, rank_image , show_rank
+    global hero, menu, back, st_num ,finish, mt, current_time, time_score, rank_image , show_rank , scores, ss
     current_time = get_time()
     show_rank = False
     time_score = 0.0
@@ -63,14 +63,11 @@ def enter():
     mt =0
     menu = Menu()
     hero = genji.Genji()
+    scores = []
+    ss = []
     loadScores()
 
-    #enemy.enemys.append(enemy.Hanjo(500,200))
-    #enemy.enemys.append(enemy.Dragon(1200,300))
-    #enemy.enemys.append(enemy.Dragon(1200, 350))
-    #enemy.enemys.append(enemy.Dragon(1200, 400))
-    #enemy.enemys.append(enemy.Reinhard(800,350))
-    #enemy.enemys.append(enemy.Para(1000,500,200))
+
     enemy.enemys.append(enemy.Robot(500, 250))
     enemy.enemys.append(enemy.Robot(800, 350))
     enemy.enemys.append(enemy.Robot(950, 200))
@@ -126,7 +123,7 @@ def update(frame_time):
         elif bullet.index >= 1:  #적총알과 겐지 충돌중
             if collision(bullet, hero) and  hero.protect_onoff == False:
                 bullet.delete = True
-                hero.hp -= 10
+                hero.hp = max(hero.hp-8,0)
                 effect.damage_effect.append(effect.Effect_damage(hero.x, hero.y + 100))
 
             elif collision(bullet, hero) and  hero.protect_onoff == True:
@@ -141,22 +138,25 @@ def update(frame_time):
             enemys.state =1
         if collision(hero, enemys) and hero.vlrur == False: # 겐지와 적 몸박
             hero.vlrur = True
-            hero.hp-= enemys.damage
+            hero.hp = max(hero.hp - enemys.damage, 0)
             effect.damage_effect.append(effect.Effect_damage(hero.x, hero.y + 100))
 
 
-    if enemy.enemys == [] and finish == False and show_rank == False:#몬스터를 다 잡았을때
+    if hero.alive == False:
+        entry = Entry(max((int)(st_num * 1000 - time_score * 50), 0), time_score, st_num)
+        add(entry)
+        score_sort()
+        show_rank = True
+    if enemy.enemys == [] and finish == False and show_rank == False and hero.alive:#몬스터를 다 잡았을때
         if st_num ==3: #클리어하고 기록해야함
             entry = Entry(max((int)(st_num*1000 - time_score*50),0), time_score, st_num)
             add(entry)
-
             score_sort()
             show_rank = True
         if show_rank == False:
             effect.damage_effect.append(effect.Effect_Balck_IO())
             finish = True
             st_num +=1
-
     if finish and show_rank == False:
         mt += 1
         if mt>=60:
