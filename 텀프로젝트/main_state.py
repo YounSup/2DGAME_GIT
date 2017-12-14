@@ -16,22 +16,30 @@ class Menu:
         self.image.draw(600,300)
 
 def enter():
-    global hero, stage, menu, back, black
-    black = effect.Effect_Balck_IO()
+    global hero, stage, menu, back, st_num ,finish, mt
+    st_num = 1
+    finish = False
+    mt =0
     menu = Menu()
     hero = genji.Genji()
+
     #enemy.enemys.append(enemy.Hanjo(500,200))
     #enemy.enemys.append(enemy.Dragon(1200,300))
     #enemy.enemys.append(enemy.Dragon(1200, 350))
     #enemy.enemys.append(enemy.Dragon(1200, 400))
     #enemy.enemys.append(enemy.Reinhard(800,350))
     #enemy.enemys.append(enemy.Para(1000,500,200))
-
+    enemy.enemys.append(enemy.Robot(500, 250))
+    enemy.enemys.append(enemy.Robot(800, 350))
+    enemy.enemys.append(enemy.Robot(950, 200))
+    enemy.enemys.append(enemy.Robot(250, 350))
+    enemy.enemys.append(enemy.Robot(450, 150))
     back = background.Background()
 
 
 
 def exit():
+    global hero, stage, menu, back, black
     del(hero)
 
 def handle_events(frame_time):
@@ -39,16 +47,21 @@ def handle_events(frame_time):
     for event in events:
         if event.type == SDL_QUIT:
             game_framework.quit()
+        elif (event.type, event.key) == (SDL_KEYDOWN, SDLK_ESCAPE):
+            game_framework.quit()
         else:
             hero.handle_events(event,frame_time)
 
 
 def update(frame_time):
+    global  mt,finish, st_num
 
+    print(mt)
     hero.update(frame_time)
     genji.bullet_update(frame_time)
     enemy.enemys_update(frame_time)
     effect.damage_update(frame_time)
+
 
 
     for bullet in  genji.throw_knife:
@@ -78,6 +91,28 @@ def update(frame_time):
         if collision(hero, enemys): # 겐지와 적 몸박
             hero.hp-= enemys.damage
             effect.damage_effect.append(effect.Effect_damage(hero.x, hero.y + 100))
+
+
+    if enemy.enemys == [] and finish == False:#몬스터를 다 잡았을때
+        effect.damage_effect.append(effect.Effect_Balck_IO())
+        finish = True
+        st_num +=1
+
+    if finish:
+        mt += 1
+        if mt>=60:
+            if st_num ==2:
+
+                enemy.enemys.append(enemy.Sold(500, 250))
+                enemy.enemys.append(enemy.Robot(800, 350))
+                enemy.enemys.append(enemy.Sold(800, 200))
+                enemy.enemys.append(enemy.Robot(250, 350))
+                enemy.enemys.append(enemy.Robot(450, 150))
+
+            hero.x, hero.y, hero.z = 100, 250, 0
+            mt=0
+            finish = False
+
     clear_canvas()
 
 

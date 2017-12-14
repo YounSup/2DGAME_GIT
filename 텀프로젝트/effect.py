@@ -14,7 +14,7 @@ class Effect_Balck_IO:
         self.i =0
         self.delete = False
     def update(self,frame_time):
-        if self.i%2 ==0:
+        if self.i%3 ==0:
             if self.Black_in == True:
                 self.Alpha_num += 0.05
                 if self.Alpha_num >= 1.0:

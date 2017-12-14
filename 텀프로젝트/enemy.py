@@ -2,6 +2,7 @@ from pico2d import *
 import genji
 import main_state
 import math
+import random
 enemys= []
 LEFT, RIGHT = 0 ,1
 i = 0
@@ -9,27 +10,28 @@ class Robot:
     image = [None, None]
     def __init__(c, x, y, z=0, dir = 1):
         c.x, c.y, c.z = x, y, z
-        c.damage, c.speed = 3,5
+        c.damage, c.speed = 3,random.randint(3,8)
         c.hp =200
         c.state= 0
         c.dir = dir
         c.frame =0
         c.count =0
+        c.mc = random.randint(10,15)
         if Robot.image[0] == None or Robot.image[1] == None :
           Robot.image[0] = load_image('쫄따구.png')
           Robot.image[1] = load_image('쫄따구오른쪽.png')
           
     def idle(c):
         if c.dir == RIGHT :# 오른쪽
-            c.x += 5
+            c.x += c.speed
             c.count +=1
-            if c.count == 10:
+            if c.count == c.mc:
                 c.count =0
                 c.dir =LEFT
         elif c.dir == LEFT:
-            c.x -= 5
+            c.x -= c.speed
             c.count +=1
-            if c.count == 10:
+            if c.count == c.mc:
                 c.count =0
                 c.dir =RIGHT
     def Attack(c):
@@ -45,7 +47,8 @@ class Robot:
                 
     def update(c, frame):
         c.frame = (c.frame+1)%4
-
+        if c.hp<200:
+            c.state=2
         if c.state == 0:
             c.idle()
         else:
@@ -143,13 +146,16 @@ class Sold:
 
     def update(c, frame):
         c.frame = (c.frame+1)%9
-        c.idle()
+        if c.hp<150:
+            c.state =1
         c.attack_frametime += frame
         if c.attack_frametime >=0.1:
             c.attack()
             c.attack_frametime=0
         if c.state == 1:
             c.Attack()
+        else:
+            c.idle()
     def draw(c):
         if c.dir == LEFT:
             Sold.image.clip_draw(c.frame * 300, 300 ,300,300,c.x,c.y)

@@ -432,7 +432,7 @@ class Genji:
                             self.ult_OnOFF = True
                             self.cool_ult = self.NUM_SKILL_ON
                             self.save_frame =0
-                            effect.damage_effect.append(effect.Effect_Balck_IO())
+                            #effect.damage_effect.append(effect.Effect_Balck_IO())
                             effect.damage_effect.append(effect.Effect_genji_ult(self.x, self.y+30))
 
 
