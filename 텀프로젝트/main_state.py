@@ -22,13 +22,13 @@ def enter():
     hero = genji.Genji()
     #enemy.enemys.append(enemy.Hanjo(500,200))
     #enemy.enemys.append(enemy.Dragon(1200,300))
-    enemy.enemys.append(enemy.Dragon(1200, 350))
+    #enemy.enemys.append(enemy.Dragon(1200, 350))
     #enemy.enemys.append(enemy.Dragon(1200, 400))
     #enemy.enemys.append(enemy.Reinhard(800,350))
     #enemy.enemys.append(enemy.Para(1000,500,200))
 
     back = background.Background()
-    effect.damage_effect.append(effect.Effect_genji_ult(-1000, -1100))
+
 
 
 def exit():

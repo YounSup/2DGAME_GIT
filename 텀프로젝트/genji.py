@@ -44,6 +44,20 @@ class bullet:
                     self.x += self.speed
                 elif self.state == Left:
                     self.x -= self.speed
+            elif self.index==4:
+                if self.state == Right:
+                    self.x += self.speed
+                    self.y += self.speed-18
+                elif self.state == Left:
+                    self.x -= self.speed
+                    self.y += self.speed -18
+            elif self.index==5:
+                if self.state == Right:
+                    self.x += self.speed
+                    self.y -= self.speed-18
+                elif self.state == Left:
+                    self.x -= self.speed
+                    self.y -= self.speed - 18
         elif self.out == True:
             if self.index <2:
                 if self.state == Left:
@@ -61,13 +75,14 @@ class bullet:
                     self.x -= self.speed
                     self.y -= self.speed-10
 
-            elif self.index==3:
+            elif self.index>=3:
                 if self.state == Left:
                     self.x -= self.speed
                     self.y += self.speed // 2
                 elif self.state == Right:
                     self.x += self.speed
                     self.y += self.speed // 2
+
 
         self.Rotateangle +=60
         if self.x >=1200 or self.x <=0:
@@ -82,6 +97,10 @@ class bullet:
             return self.x - 10, self.y - 80, self.x + 10, self.y  -60
         elif self.index == 3:
             return self.x - 10, self.y - 80, self.x + 10, self.y - 60
+        elif self.index == 4:
+            return self.x - 10, self.y - 80, self.x + 10, self.y - 60
+        elif self.index == 5:
+            return self.x - 10, self.y - 80, self.x + 10, self.y - 60
 
     def draw_bb(self):
         draw_rectangle(*self.get_bb())
@@ -94,9 +113,8 @@ class bullet:
                 bullet.image_bullet.clip_draw(30, 0 ,30,11,self.x,self.y)
             elif self.index == 2:
                 bullet.image_Para_bullet.clip_draw(0, 0 ,52,49,self.x,self.y)
-            elif self.index == 3:
+            elif self.index >= 3:
                 bullet.image_Hanjo_bullet.clip_draw(243, 0, 243, 19, self.x, self.y, 243//2.5, 19//2)
-
         elif self.state == Left:
             if self.index ==0:
                bullet.image.rotate_draw(self.Rotateangle, self.x, self.y, 47, 48)
@@ -104,14 +122,18 @@ class bullet:
                bullet.image_bullet.clip_draw(0, 0 ,30,11,self.x,self.y)
             elif self.index == 2:
                bullet.image_Para_bullet.clip_draw(0, 0 ,52,49,self.x,self.y)
-            elif self.index == 3:
+            elif self.index >= 3:
                 bullet.image_Hanjo_bullet.clip_draw(0, 0, 243, 19, self.x, self.y, 243//2.5 , 19//2 )
+
         self.draw_bb()
 
 
 
 class Genji:
     font = None
+    sound_jilpung = None
+    sound_attack = None
+    sound_ult = None
     def __init__(self):
         self.image = load_image('겐지스프라이트.png')
         self.imageleft = load_image('겐지스프라이트왼쪽.png')
@@ -132,6 +154,9 @@ class Genji:
         self.image_inventory = load_image('인벤토리.png')
         if (Genji.font == None):
             Genji.font = load_font('koverwatch.ttf',40)
+            Genji.sound_jilpung= load_wav('jilpung.wav')
+            Genji.sound_attack= load_wav('attack.wav')
+            Genji.sound_ult = load_wav('ult.wav')
 
         self.x, self.y, self.z = 100, 250 , 0
         self.Skill_1_OnOff = True; # True가 스킬 on임
@@ -349,6 +374,7 @@ class Genji:
                             throw_knife.append(bullet(self.x + 80, self.y + 60, self.z, Right,0))
                         else:
                             throw_knife.append(bullet(self.x - 80, self.y + 60, self.z, Left,0))
+                        Genji.sound_attack.play()
                     else:
                         if self.genjistate == Right:
                             for ene in enemy.enemys:
@@ -396,16 +422,21 @@ class Genji:
                             self.drawnum = 0
                             self.Skill_1_OnOff = False;
                             self.cool_shift= self.NUM_SKILL_ON
+                            Genji.sound_jilpung.play()
                         else :
                             print("쿨타임 질풍참")
+
 
                 elif event.key == SDLK_q:
                         if self.cool_ult <=0:
                             self.ult_OnOFF = True
                             self.cool_ult = self.NUM_SKILL_ON
                             self.save_frame =0
+                            effect.damage_effect.append(effect.Effect_Balck_IO())
                             effect.damage_effect.append(effect.Effect_genji_ult(self.x, self.y+30))
-                            
+
+
+                            Genji.sound_ult.play()
                             #black.state =0
                 elif event.key == SDLK_e:
                     if self.cool_protect <= 0:

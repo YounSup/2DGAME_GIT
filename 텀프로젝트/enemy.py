@@ -228,77 +228,12 @@ class Para:
         Para.image_shadow.draw(c.x, c.y - 300, Para.image_shadow.w//2, Para.image_shadow.h)
 
 
-class Hanjo:
-    image = None
-    def __init__(c, x, y, z=0, dir = 1):
-        c.x,c.y,c.z = x, y, z
-        c.damage, c.speed = 15,0
-        c.state= 0
-        c.dir = dir
-        c.frame =0
-        c.count =0
-        c.hp = 15000
-        c.attack_frametime=0
-        if Hanjo.image == None:
-            Hanjo.image = load_image('한조.png')
-    def idle(c):
-        if c.dir == RIGHT :
-            c.x += 5
-            c.count +=1
-            if c.count == 60:
-                c.count =0
-                c.dir =LEFT
-        elif c.dir == LEFT:
-            c.x -= 5
-            c.count +=1
-            if c.count == 60:
-                c.count =0
-                c.dir =RIGHT
-    def get_bb(self):
-        return self.x - 30, self.y - 85, self.x + 30, self.y  -55
-    def get_bb2(self):
-        return self.x - 200, self.y - 90, self.x + 200, self.y + 60
-    def draw_bb(self):
-        draw_rectangle(*self.get_bb())
-    def Attack(self):
-        if main_state.hero.x > self.x:
-            self.dir = RIGHT
-        else:
-            self.dir = LEFT
-        if main_state.hero.jumpcount == 0:
-            my = ((main_state.hero.y+40)- self.y) // 10
-            self.y += my
-
-
-    def update(c, frame):
-        c.frame = (c.frame+1)%2
-
-        c.attack_frametime += frame
-        if c.attack_frametime >=0.1:
-            c.attack()
-            c.attack_frametime=0
-        if c.state == 1:
-            c.Attack()
-        else:
-            c.idle()
-    def draw(c):
-        if c.dir == LEFT:
-            Hanjo.image.clip_draw(c.frame * 300, 250 ,300,250,c.x,c.y,300//1.2, 250//1.2)
-        else:
-            Hanjo.image.clip_draw(c.frame * 300, 0 ,300,250,c.x,c.y,300//1.2, 250//1.2)
-        c.draw_bb()
-    def attack(c):
-        if c.dir == RIGHT:
-            genji.throw_knife.append(genji.bullet(c.x+ 110, c.y-6, c.z, LEFT,3))
-        else:
-            genji.throw_knife.append(genji.bullet(c.x-110 , c.y-6, c.z, RIGHT,3))
-
-
 class Dragon:
     image_head = None
     image_body = None
     image_tail = None
     shadow = None
+    sound = None
     def __init__(self, X=1150, Y=300):
         self.x =X
         self.y =Y
@@ -310,6 +245,8 @@ class Dragon:
             Dragon.image_body = load_image('D2.png')
             Dragon.image_tail = load_image('D3.png')
             Dragon.shadow = load_image('그림자.png')
+            Dragon.sound = load_wav('hanjo.wav')
+        Dragon.sound.play()
     def get_bb(self):
         return self.x-70 , self.y - 160, self.x + 660, self.y-120
     def get_bb2(self):
@@ -332,6 +269,77 @@ class Dragon:
         Dragon.image_head.draw(self.x, self.y + (40*math.sin(math.radians(self.x))))
         Dragon.shadow.draw(self.x+300, self.y - 150,750,21)
         self.draw_bb()
+class Hanjo:
+    image = None
+    def __init__(c, x, y, z=0, dir = 1):
+        c.x,c.y,c.z = x, y, z
+        c.damage, c.speed = 15,0
+        c.state= 0
+        c.dir = dir
+        c.frame =0
+        c.count =0
+        c.hp = 5000
+        c.attack_frametime=0
+        if Hanjo.image == None:
+            Hanjo.image = load_image('한조.png')
+    def idle(self):
+        if main_state.hero.x > self.x:
+            self.dir = RIGHT
+            if self.count % 100 < 60:
+                self.x = max(self.x - 9, 100)
+        else:
+            self.dir = LEFT
+            if self.count % 100 < 60:
+                self.x = min(self.x + 9, 1100)
+
+        if main_state.hero.jumpcount == 0:
+            my = ((main_state.hero.y + 40) - self.y) // 10
+            self.y += my
+    def get_bb(self):
+        return self.x - 30, self.y - 85, self.x + 30, self.y  -55
+    def get_bb2(self):
+        return self.x - 200, self.y - 90, self.x + 200, self.y + 60
+    def draw_bb(self):
+        draw_rectangle(*self.get_bb())
+    def Attack(self):
+        pass
+
+    def update(c, frame):
+        if c.count%5 ==0:
+            c.frame = (c.frame+1)%2
+
+        c.attack_frametime += frame
+        if c.attack_frametime >=0.4:
+            c.attack()
+            c.attack_frametime=0
+
+        if c.count%200 ==0:
+            c.attack2()
+
+        c.idle()
+        c.count += 1
+    def draw(c):
+        if c.dir == LEFT:
+            Hanjo.image.clip_draw(c.frame * 300, 250 ,300,250,c.x,c.y,300//1.2, 250//1.2)
+        else:
+            Hanjo.image.clip_draw(c.frame * 300, 0 ,300,250,c.x,c.y,300//1.2, 250//1.2)
+        c.draw_bb()
+    def attack(c):
+        if c.dir == RIGHT:
+            genji.throw_knife.append(genji.bullet(c.x+ 110, c.y-6, c.z, LEFT,3))
+        else:
+            genji.throw_knife.append(genji.bullet(c.x-110 , c.y-6, c.z, RIGHT,3))
+    def attack2(c):
+        if c.dir == RIGHT:
+            genji.throw_knife.append(genji.bullet(c.x+ 110, c.y-6, c.z, LEFT,3))
+            genji.throw_knife.append(genji.bullet(c.x + 110, c.y - 6, c.z, LEFT, 4))
+            genji.throw_knife.append(genji.bullet(c.x + 110, c.y - 6, c.z, LEFT, 5))
+        else:
+            genji.throw_knife.append(genji.bullet(c.x-110 , c.y-6, c.z, RIGHT,3))
+            genji.throw_knife.append(genji.bullet(c.x - 110, c.y - 6, c.z, RIGHT, 4))
+            genji.throw_knife.append(genji.bullet(c.x - 110, c.y - 6, c.z, RIGHT, 5))
+
+
 def enemys_update(frame_time):
     global i
     if i %2 == 0:

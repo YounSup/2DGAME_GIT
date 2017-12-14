@@ -1,5 +1,5 @@
 from pico2d import*
-
+import main_state
 damage_effect=[]
 
 
@@ -12,8 +12,9 @@ class Effect_Balck_IO:
         self.Black_in = True
         self.Alpha_num = 0.0
         self.i =0
-    def update(self):
-        if self.i%20 ==0:
+        self.delete = False
+    def update(self,frame_time):
+        if self.i%2 ==0:
             if self.Black_in == True:
                 self.Alpha_num += 0.05
                 if self.Alpha_num >= 1.0:
@@ -22,12 +23,11 @@ class Effect_Balck_IO:
             else:
                 self.Alpha_num-=0.05
                 if self.Alpha_num <= 0.0:
-                    self.Black_in = True
-                    self.state = 1
-                    self.Alpha_num = 0.0
+                    self.delete= True
             Effect_Balck_IO.image.opacify(self.Alpha_num)
-            self.i += 1
-    def draw(self):
+        self.i += 1
+
+    def draw(self,frame_time):
         Effect_Balck_IO.image.draw(600,300)
 
 class Effect_damage:
@@ -79,6 +79,8 @@ class Effect_genji_ult:
 
     def update(self, frame_time):
         self.save_frame += frame_time
+        self.x = main_state.hero.x
+        self.y = main_state.hero.y+30
         if self.save_frame >=0.06:
             self.frame += 1
             self.save_frame = 0
