@@ -16,15 +16,17 @@ class Menu:
         self.image.draw(600,300)
 
 def enter():
-    global hero, stage, menu, back, black,t
+    global hero, stage, menu, back, black
     black = effect.Effect_Balck_IO()
     menu = Menu()
     hero = genji.Genji()
-    enemy.enemys.append(enemy.Hanjo(500,200))
-   # enemy.enemys.append(enemy.Sold(150,250))
+    #enemy.enemys.append(enemy.Hanjo(500,200))
+    #enemy.enemys.append(enemy.Dragon(1200,300))
+    enemy.enemys.append(enemy.Dragon(1200, 350))
+    #enemy.enemys.append(enemy.Dragon(1200, 400))
     #enemy.enemys.append(enemy.Reinhard(800,350))
     #enemy.enemys.append(enemy.Para(1000,500,200))
-    t = enemy.Dragon()
+
     back = background.Background()
     effect.damage_effect.append(effect.Effect_genji_ult(-1000, -1100))
 
@@ -47,7 +49,7 @@ def update(frame_time):
     genji.bullet_update(frame_time)
     enemy.enemys_update(frame_time)
     effect.damage_update(frame_time)
-    t.update(frame_time)
+
 
     for bullet in  genji.throw_knife:
         if bullet.index == 0:
@@ -71,14 +73,13 @@ def update(frame_time):
                     bullet.state = 0
 
     for enemys in enemy.enemys:
-        if collision2(hero, enemys):
+        if collision2(hero, enemys): # 몬스터 ai 범위에 들어온다면
             enemys.state =1
-        if collision(hero, enemys):
-            hero.hp-=1
+        if collision(hero, enemys): # 겐지와 적 몸박
+            hero.hp-= enemys.damage
             effect.damage_effect.append(effect.Effect_damage(hero.x, hero.y + 100))
-
     clear_canvas()
-    delay(0.020)
+
 
 def draw(frame_time):
     back.draw()
@@ -89,7 +90,6 @@ def draw(frame_time):
     hero.draw()
     genji.bullet_draw(frame_time)
     effect.damage_draw(frame_time)
-    t.draw()
     update_canvas()
 
 

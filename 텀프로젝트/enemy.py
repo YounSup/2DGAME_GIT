@@ -9,7 +9,7 @@ class Robot:
     image = [None, None]
     def __init__(c, x, y, z=0, dir = 1):
         c.x, c.y, c.z = x, y, z
-        c.damage, c.speed = 1,5
+        c.damage, c.speed = 3,5
         c.hp =200
         c.state= 0
         c.dir = dir
@@ -68,7 +68,7 @@ class Reinhard:
     image = None
     def __init__(c, x, y, z=0, dir = 1):
         c.x,c.y,c.z = x, y, z
-        c.damage, c.speed = 0,0
+        c.damage, c.speed = 10,0
         c.state= 0
         c.dir = dir
         c.frame =0
@@ -104,7 +104,7 @@ class Sold:
     image = None
     def __init__(c, x, y, z=0, dir = 1):
         c.x,c.y,c.z = x, y, z
-        c.damage, c.speed = 0,0
+        c.damage, c.speed = 5,0
         c.state= 0
         c.dir = dir
         c.frame =0
@@ -232,7 +232,7 @@ class Hanjo:
     image = None
     def __init__(c, x, y, z=0, dir = 1):
         c.x,c.y,c.z = x, y, z
-        c.damage, c.speed = 0,0
+        c.damage, c.speed = 15,0
         c.state= 0
         c.dir = dir
         c.frame =0
@@ -302,17 +302,25 @@ class Dragon:
     def __init__(self, X=1150, Y=300):
         self.x =X
         self.y =Y
+        self.z =0
+        self.state, self.hp =0 , 1000
+        self.damage = 5
         if Dragon.image_head==None:
             Dragon.image_head = load_image('D1.png')
             Dragon.image_body = load_image('D2.png')
             Dragon.image_tail = load_image('D3.png')
             Dragon.shadow = load_image('그림자.png')
     def get_bb(self):
-        return self.x-70 , self.y - 120, self.x + 660, self.y-160
+        return self.x-70 , self.y - 160, self.x + 660, self.y-120
+    def get_bb2(self):
+        return self.x - 70, self.y - 120, self.x + 660, self.y - 160
     def draw_bb(self):
         draw_rectangle(*self.get_bb())
+
     def update(self, frame_time):
         self.x -=5
+        if self.x <-800:
+            self.x = 1200
     def draw(self):
 
         for i in range(15):
