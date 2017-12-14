@@ -15,6 +15,7 @@ ss= []
 k= 0
 fileName = "genji_score.pickle"
 show_rank = False
+rank_image = None
 
 class Entry:
     def __init__(self, score, time,stage):
@@ -53,8 +54,9 @@ def SaveScores():
 
 
 def enter():
-    global hero, stage, menu, back, st_num ,finish, mt, current_time, time_score
+    global hero, menu, back, st_num ,finish, mt, current_time, time_score, rank_image , show_rank
     current_time = get_time()
+    show_rank = False
     time_score = 0.0
     st_num = 1
     finish = False
@@ -75,20 +77,27 @@ def enter():
     enemy.enemys.append(enemy.Robot(250, 350))
     enemy.enemys.append(enemy.Robot(450, 150))
     back = background.Background()
-
+    if rank_image == None:
+        rank_image = load_image('랭킹.png')
 
 
 def exit():
-    global hero, stage, menu, back, black
+    global hero, menu, back
     del(hero)
+    del(menu)
+    del(back)
+    enemy.enemys=[]
 
 def handle_events(frame_time):
+    global  show_rank
     events = get_events()
     for event in events:
         if event.type == SDL_QUIT:
             game_framework.quit()
         elif (event.type, event.key) == (SDL_KEYDOWN, SDLK_ESCAPE):
-            game_framework.quit()
+            game_framework.change_state(title_state)
+        elif (event.type , event.key) == (SDL_KEYDOWN, SDLK_SPACE) and show_rank:
+            game_framework.change_state(title_state)
         else:
             hero.handle_events(event,frame_time)
 
@@ -169,7 +178,7 @@ def update(frame_time):
 
 
 def draw(frame_time):
-    global time_score,st_num
+    global time_score,st_num, rank_image
     back.draw()
     hero.font.draw(400, 570, 'Stage:%d' % st_num, (255, 00, 00))
     hero.font.draw(550, 570, 'Time:%f' % time_score, (255, 00, 00))
@@ -181,14 +190,20 @@ def draw(frame_time):
     effect.damage_draw(frame_time)
     k = 0
     if show_rank:
+        rank_image.draw(600, 300)
         hero.font.draw(350, 530 , '순위   스테이지     최종점수        Time', (200, 200, 200))
         for i in ss:
             if k <=9:
-                hero.font.draw(360, 480 - 40 * k, '%d' % (k+1), (200, 200, 200))
-                hero.font.draw(460, 480 - 40 * k, '%d' % i.stage, (200, 200, 200))
-                hero.font.draw(590, 480 - 40 * k, '%d' % i.score, (200, 200, 200))
-                hero.font.draw(720, 480 - 40 * k, '%f' % i.time, (200, 200, 200))
+                hero.font.draw(360, 440 - 40 * k, '%d' % (k+1), (200, 200, 200))
+                hero.font.draw(460, 440 - 40 * k, '%d' % i.stage, (200, 200, 200))
+                hero.font.draw(590, 440 - 40 * k, '%d' % i.score, (200, 200, 200))
+                hero.font.draw(720, 440 - 40 * k, '%f' % i.time, (200, 200, 200))
             k += 1
+        hero.font.draw(330, 480 , 'Now', (200, 0, 0))
+        hero.font.draw(460, 480 , '%d' % st_num, (200, 0, 0))
+        hero.font.draw(590, 480 , '%d' % max((int)(st_num * 1000 - time_score * 50), 0), (200, 0, 0))
+        hero.font.draw(720, 480 , '%f' % time_score, (200, 0, 0))
+
     #for i in ss:
         #print(i)
     #k=0
