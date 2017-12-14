@@ -11,7 +11,7 @@ class Robot:
     def __init__(c, x, y, z=0, dir = 1):
         c.x, c.y, c.z = x, y, z
         c.damage, c.speed = 3,random.randint(3,8)
-        c.hp =200
+        c.hp =100
         c.state= 0
         c.dir = dir
         c.frame =0
@@ -47,7 +47,7 @@ class Robot:
                 
     def update(c, frame):
         c.frame = (c.frame+1)%4
-        if c.hp<200:
+        if c.hp<100:
             c.state=2
         if c.state == 0:
             c.idle()

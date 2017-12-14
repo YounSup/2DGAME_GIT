@@ -15,7 +15,7 @@ class bullet:
     def __init__(self ,X, Y,Z, STATE, INDEX):
         self.index = INDEX
         self.x, self.y, self.z =X,Y,Z
-        self.speed, self.damage= 20,10
+        self.speed, self.damage= 20,30
         self.Rotateangle =0
         self.state = STATE
         self.delete = False
@@ -180,11 +180,19 @@ class Genji:
         self.save_frame=0
         self.protect_frame =0
         self.protect_onoff = False
+        self.vlrur = False
+        self.vlrur_num =0
 
 
     def update(self, frame):
         global i
         self.bodyframe = (self.bodyframe + 1) % 13
+
+        if self.vlrur == True:
+            self.vlrur_num += 1
+            if self.vlrur_num >30:
+                self.vlrur= False
+                self.vlrur_num=0
 
         if self.jumpstate == True:
             if self.jumpframe ==7:
