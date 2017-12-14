@@ -16,6 +16,7 @@ k= 0
 fileName = "genji_score.pickle"
 show_rank = False
 rank_image = None
+mainbgm = None
 
 class Entry:
     def __init__(self, score, time,stage):
@@ -54,7 +55,7 @@ def SaveScores():
 
 
 def enter():
-    global hero, menu, back, st_num ,finish, mt, current_time, time_score, rank_image , show_rank , scores, ss,MAX_STAGE, dragon_time,DRAGON
+    global hero, menu, back, st_num ,finish, mt, current_time, time_score, rank_image , show_rank , scores, ss,MAX_STAGE, dragon_time,DRAGON, mainbgm
     dragon_time =0
     DRAGON = []
     current_time = get_time()
@@ -77,6 +78,9 @@ def enter():
     back = background.Background()
     if rank_image == None:
         rank_image = load_image('랭킹.png')
+        mainbgm = load_music('Hanamura.mp3')
+        mainbgm.set_volume(128)
+    mainbgm.repeat_play()
 
 
 def exit():

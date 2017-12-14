@@ -125,7 +125,7 @@ class bullet:
             elif self.index >= 3:
                 bullet.image_Hanjo_bullet.clip_draw(0, 0, 243, 19, self.x, self.y, 243//2.5 , 19//2 )
 
-        self.draw_bb()
+
 
 
 
@@ -134,6 +134,9 @@ class Genji:
     sound_jilpung = None
     sound_attack = None
     sound_ult = None
+    sound_ultready = None
+    sound_replect= None
+    sound_sword = None
     def __init__(self):
         self.image = load_image('겐지스프라이트.png')
         self.imageleft = load_image('겐지스프라이트왼쪽.png')
@@ -157,8 +160,11 @@ class Genji:
         if (Genji.font == None):
             Genji.font = load_font('koverwatch.ttf',40)
             Genji.sound_jilpung= load_wav('jilpung.wav')
-            Genji.sound_attack= load_wav('attack.wav')
+            Genji.sound_attack= load_wav('좌클.wav')
             Genji.sound_ult = load_wav('ult.wav')
+            Genji.sound_ultready = load_wav('칼을뽑을.wav')
+            Genji.sound_replect = load_wav('튕겨내기.wav')
+            Genji.sound_sword = load_wav('sword.wav')
 
         self.x, self.y, self.z = 100, 250 , 0
         self.Skill_1_OnOff = True; # True가 스킬 on임
@@ -231,13 +237,15 @@ class Genji:
                 self.jumpcount = 0
                 self.z =0
 
-        if self.cool_shift >0:
+        if self.cool_shift >0 and i%3 ==0:
             self.cool_shift -=1
-        if self.cool_protect>0:
+        if self.cool_protect>0 and i%5 ==0:
             self.cool_protect -=1
 
-        if self.cool_ult>0 and i%10 ==0:
+        if self.cool_ult>0 and i%20 ==0:
             self.cool_ult-=1
+            if self.cool_ult ==0:
+                self.sound_ultready.play()
 
         if self.ult_OnOFF== True:
             self.save_frame += frame
@@ -246,7 +254,7 @@ class Genji:
 
         if self.protect_onoff== True:
             self.protect_frame += frame
-            if self.protect_frame>=1:
+            if self.protect_frame>=2:
                 self.protect_onoff = False
                 self.protect_frame=0
         #if black.state ==0:
@@ -401,15 +409,16 @@ class Genji:
                                 lx, ty, rx, by = ene.get_bb()
                                 if collision(ene, self.x, self.y, self.x+200 , self.y - 70, self.z):
                                     effect.damage_effect.append(effect.Effect_damage(ene.x, ene.y + 50))
-                                    ene.hp -= 120
+                                    ene.hp -= 100
                         else:
                             for ene in enemy.enemys:
                                 lx, ty, rx, by = ene.get_bb()
                                 if collision(ene, self.x-200, self.y, self.x , self.y - 70, self.z):
                                     effect.damage_effect.append(effect.Effect_damage(ene.x, ene.y + 50))
-                                    ene.hp -=120
+                                    ene.hp -=100
                         self.ult_attacknum += 1
                         self.ult_flag = 1
+                        self.sound_sword.play()
                 elif event.key == SDLK_1:
                     if self.potion>=1:
                         self.hp = min(self.hp+100, 200)
@@ -465,6 +474,7 @@ class Genji:
                     if self.cool_protect <= 0:
                         self.protect_onoff = True
                         self.cool_protect = self.NUM_SKILL_ON
+                        self.sound_replect.play()
 
 
             if event.type == SDL_KEYUP:

@@ -6,6 +6,7 @@ import random
 enemys= []
 LEFT, RIGHT = 0 ,1
 i = 0
+bgm = None
 class Robot:
     image = [None, None]
     def __init__(c, x, y, z=0, dir = 1):
@@ -285,6 +286,7 @@ class Dragon:
 
 class Hanjo:
     image = None
+    sound = None
     def __init__(c, x, y, z=0, dir = 1):
         c.x,c.y,c.z = x, y, z
         c.damage, c.speed = 15,0
@@ -297,6 +299,8 @@ class Hanjo:
         c.attack_frametime=0
         if Hanjo.image == None:
             Hanjo.image = load_image('한조.png')
+            Hanjo.sound = load_wav('한조대기중.wav')
+        Hanjo.sound.play()
     def idle(self):
         if main_state.hero.x > self.x:
             self.dir = RIGHT
@@ -360,7 +364,7 @@ class Hanjo:
 
 
 def enemys_update(frame_time):
-    global i
+    global i, bgm
     if i %2 == 0:
         for enemy in enemys:
             enemy.update(frame_time)
@@ -368,6 +372,9 @@ def enemys_update(frame_time):
                 enemy.state = 3
             if enemy.state ==3:
                 enemys.remove(enemy)
+                if bgm == None:
+                    bgm =load_wav('enemykill.wav')
+                bgm.play()
     i+=1
 def enemys_draw(frame_time):
     for enemy in enemys:
