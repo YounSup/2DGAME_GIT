@@ -54,11 +54,13 @@ def SaveScores():
 
 
 def enter():
-    global hero, menu, back, st_num ,finish, mt, current_time, time_score, rank_image , show_rank , scores, ss
+    global hero, menu, back, st_num ,finish, mt, current_time, time_score, rank_image , show_rank , scores, ss,MAX_STAGE, dragon_time
+    dragon_time =0
     current_time = get_time()
     show_rank = False
     time_score = 0.0
     st_num = 1
+    MAX_STAGE =6
     finish = False
     mt =0
     menu = Menu()
@@ -71,8 +73,6 @@ def enter():
     enemy.enemys.append(enemy.Robot(500, 250))
     enemy.enemys.append(enemy.Robot(800, 350))
     enemy.enemys.append(enemy.Robot(950, 200))
-    enemy.enemys.append(enemy.Robot(250, 350))
-    enemy.enemys.append(enemy.Robot(450, 150))
     back = background.Background()
     if rank_image == None:
         rank_image = load_image('랭킹.png')
@@ -100,7 +100,7 @@ def handle_events(frame_time):
 
 
 def update(frame_time):
-    global  mt,finish, st_num, current_time, time_score, show_rank
+    global  mt,finish, st_num, current_time, time_score, show_rank, MAX_STAGE, dragon_time
     if show_rank == False:
         time_score = get_time() - current_time
 
@@ -109,6 +109,17 @@ def update(frame_time):
     enemy.enemys_update(frame_time)
     effect.damage_update(frame_time)
 
+    if st_num ==6:
+        dragon_time+=1
+        if dragon_time >500:
+            enemy.enemys.append(enemy.Dragon(1400, hero.y + 200))
+            enemy.enemys.append(enemy.Dragon(1400, hero.y + 100))
+            enemy.enemys.append(enemy.Dragon(1400, hero.y ))
+            dragon_time =0
+        for i in enemy.enemys:
+            if i.dragon:
+                st_num+=1
+                show_rank== True
 
 
     for bullet in  genji.throw_knife:
@@ -142,14 +153,14 @@ def update(frame_time):
             effect.damage_effect.append(effect.Effect_damage(hero.x, hero.y + 100))
 
 
-    if hero.alive == False:
-        entry = Entry(max((int)(st_num * 1000 - time_score * 50), 0), time_score, st_num)
+    if hero.alive == False and show_rank == False:
+        entry = Entry(max((int)((st_num)*1000+(st_num)*200 - time_score*25),0), time_score, st_num)
         add(entry)
         score_sort()
         show_rank = True
     if enemy.enemys == [] and finish == False and show_rank == False and hero.alive:#몬스터를 다 잡았을때
-        if st_num ==3: #클리어하고 기록해야함
-            entry = Entry(max((int)(st_num*1000 - time_score*50),0), time_score, st_num)
+        if st_num ==MAX_STAGE+1: #클리어하고 기록해야함
+            entry = Entry(max((int)((st_num)*1000+(st_num)*200 - time_score*25),0), time_score, st_num)
             add(entry)
             score_sort()
             show_rank = True
@@ -161,18 +172,38 @@ def update(frame_time):
         mt += 1
         if mt>=60:
             if st_num ==2:
-                enemy.enemys.append(enemy.Sold(500, 250))
-                enemy.enemys.append(enemy.Robot(800, 350))
+                enemy.enemys.append(enemy.Sold(500, 350))
                 enemy.enemys.append(enemy.Sold(800, 200))
-                enemy.enemys.append(enemy.Robot(250, 350))
-                enemy.enemys.append(enemy.Robot(450, 150))
             elif st_num == 3:
-                enemy.enemys.append(enemy.Robot(250, 350))
+                enemy.enemys.append(enemy.Reinhard(550, 200))
+                enemy.enemys.append(enemy.Reinhard(550, 350))
+                enemy.enemys.append(enemy.Reinhard(750, 275))
+            elif st_num == 4:
+                enemy.enemys.append(enemy.Sold(700, 350))
+                enemy.enemys.append(enemy.Sold(400, 200))
+                enemy.enemys.append(enemy.Robot(350, 400))
+                enemy.enemys.append(enemy.Robot(540, 350))
+                enemy.enemys.append(enemy.Robot(950, 200))
+            elif st_num == 5:
+                enemy.enemys.append(enemy.Sold(800, 250))
+                enemy.enemys.append(enemy.Sold(100, 400))
+                enemy.enemys.append(enemy.Sold(400, 200))
+                enemy.enemys.append(enemy.Robot(350, 400))
+                enemy.enemys.append(enemy.Robot(540, 350))
+                enemy.enemys.append(enemy.Robot(950, 200))
+                enemy.enemys.append(enemy.Reinhard(650, 200))
+                enemy.enemys.append(enemy.Reinhard(650, 350))
+                enemy.enemys.append(enemy.Reinhard(850, 275))
+                enemy.enemys.append(enemy.Reinhard(1050, 350))
+            elif st_num == 6:
+                enemy.enemys.append(enemy.Hanjo(700, 300))
             else: pass
-
             hero.x, hero.y, hero.z = 100, 250, 0
             mt=0
             finish = False
+
+
+
 
     clear_canvas()
 
@@ -201,15 +232,10 @@ def draw(frame_time):
             k += 1
         hero.font.draw(330, 480 , 'Now', (200, 0, 0))
         hero.font.draw(460, 480 , '%d' % st_num, (200, 0, 0))
-        hero.font.draw(590, 480 , '%d' % max((int)(st_num * 1000 - time_score * 50), 0), (200, 0, 0))
+        hero.font.draw(590, 480 , '%d' % max((int)(st_num * 1000+st_num*200 - time_score * 25), 0), (200, 0, 0))
         hero.font.draw(720, 480 , '%f' % time_score, (200, 0, 0))
 
-    #for i in ss:
-        #print(i)
-    #k=0
-    #for i in ss:
-    #    hero.font.draw(300, 300 +50*k, '%d' %i, (200, 200, 200))
-     #   k+=1
+
 
     update_canvas()
 

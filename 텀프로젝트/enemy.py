@@ -77,6 +77,7 @@ class Reinhard:
         c.frame =0
         c.count =0
         c.hp = 500
+        c.i=0
         if Reinhard.image == None:
             Reinhard.image = load_image('라인하르트.png')
     def idle(c):
@@ -87,7 +88,9 @@ class Reinhard:
             c.dir = LEFT
             c.x -=1
     def update(c, frame):
-        c.frame = (c.frame+1)%2
+        c.i+=1
+        if c.i%5 ==0:
+            c.frame = (c.frame+1)%2
         c.idle()
     def get_bb(self):
         return self.x - 50, self.y - 75, self.x + 40, self.y-50
@@ -245,7 +248,8 @@ class Dragon:
         self.y =Y
         self.z =0
         self.state, self.hp =0 , 1000
-        self.damage = 5
+        self.damage = 25
+        self.dragon =False
         if Dragon.image_head==None:
             Dragon.image_head = load_image('D1.png')
             Dragon.image_body = load_image('D2.png')
@@ -263,7 +267,7 @@ class Dragon:
     def update(self, frame_time):
         self.x -=5
         if self.x <-800:
-            self.x = 1200
+            self.state = 3
     def draw(self):
 
         for i in range(15):
@@ -284,7 +288,8 @@ class Hanjo:
         c.dir = dir
         c.frame =0
         c.count =0
-        c.hp = 5000
+        c.hp = 6000
+        c.dragon = False
         c.attack_frametime=0
         if Hanjo.image == None:
             Hanjo.image = load_image('한조.png')
@@ -313,14 +318,18 @@ class Hanjo:
     def update(c, frame):
         if c.count%5 ==0:
             c.frame = (c.frame+1)%2
-
+        if c.hp<0:
+            c.dragon = True
         c.attack_frametime += frame
         if c.attack_frametime >=0.4:
             c.attack()
             c.attack_frametime=0
 
-        if c.count%200 ==0:
+        if c.count%120 ==0:
             c.attack2()
+
+
+
 
         c.idle()
         c.count += 1
